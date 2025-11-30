@@ -1,0 +1,40 @@
+// MANUAL IMAGE MAPPING GUIDE
+// Run this to see what images each product needs, then you can manually assign them
+
+Product ID Mappings (based on original TIF files):
+
+PHASE 1 - Artisan Pieces (Should have 3 angles each):
+- P1-01: "01 front.tif", "01 Back.tif", "01 Mid.tif"
+- P1-02: "02 Wide.tif", "02 Back.tif", "02 Mid.tif"
+- P1-03: "03 Wide.tif", "03 Back.tif", "03 Mid.tif"
+- P1-04: "04 Wide.tif", "04 Back.tif", "04 Mid.tif"
+- P1-05: "05 Wide.tif", "05 Back.tif", "05 Mid.tif"
+- P1-06: "06 Wide.tif", "06 Back.tif", "06 Mid.tif"
+- P1-07: "07 Wide.tif", "07 Back.tif", "07 Mid.tif"
+- P1-08: "08 Wide.tif", "08 Back.tif", "08 Mid.tif"
+- P1-09: "09 Wide.tif", "09 Back.tif", "09 Mid.tif"
+- P1-10: "10 Wide.tif", "10 Back.tif", "10 Mid.tif"
+- P1-11: "11 Wide.tif", "11 Back.tif", "11 Mid.tif"
+- P1-12: "12 Wide.tif", "12 Back.tif", "12 Mid.tif"
+- P1-13: "13 Wide.tif", "13 Back.tif", "13 Mid.tif"
+- P1-14: "14 Wide.tif", "14 Back.tif", "14 Mid.tif"
+
+PHASE 2 - Singing Bowls (1 image each):
+- P2-BOWL-01: "Singing Bowl 1.tif"
+- P2-BOWL-01-5: "Singing Bowl 1.5.tif"
+- P2-BOWL-02: "Singing Bowl 2.tif"
+... (all singing bowls 1-14.5)
+
+TO FIX THIS:
+1. Open "Export Phase 1 Pictures" folder
+2. Open "public" folder with IMG-*.jpg files
+3. Match each TIF to its corresponding JPG by looking at the images
+4. Create a mapping file or update mockData.ts with correct paths
+
+QUICK FIX:
+Since IMG-20250704-WA00XX.jpg are sequential and we have 62 files (0022-0083),
+we need to know: Was the conversion done in order? 
+- Did "01 front.tif" become "IMG-20250704-WA0022.jpg"?
+- Did "01 Back.tif" become "IMG-20250704-WA0023.jpg"?
+
+Please check and confirm the order!
