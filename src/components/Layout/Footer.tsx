@@ -1,4 +1,5 @@
 import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function Footer() {
   return (
@@ -17,17 +18,17 @@ export default function Footer() {
               </h3>
             </div>
             <p className="text-stone leading-relaxed text-sm font-display italic">
-              Authentic handcrafted sculptures from Nepal's master artisans, 
-              preserving centuries-old traditions.
+              Authentic handcrafted treasures from the sacred Tsum Valley, 
+              preserving ancient Himalayan traditions through master artisanship.
             </p>
             <div className="flex space-x-3">
-              <a href="#" className="p-2 border-3 border-rice hover:bg-saffron hover:border-saffron transition-colors group">
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="p-2 border-3 border-rice hover:bg-saffron hover:border-saffron transition-colors group">
                 <Facebook className="h-5 w-5 text-rice group-hover:text-ink" />
               </a>
-              <a href="#" className="p-2 border-3 border-rice hover:bg-saffron hover:border-saffron transition-colors group">
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="p-2 border-3 border-rice hover:bg-saffron hover:border-saffron transition-colors group">
                 <Instagram className="h-5 w-5 text-rice group-hover:text-ink" />
               </a>
-              <a href="#" className="p-2 border-3 border-rice hover:bg-saffron hover:border-saffron transition-colors group">
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="p-2 border-3 border-rice hover:bg-saffron hover:border-saffron transition-colors group">
                 <Twitter className="h-5 w-5 text-rice group-hover:text-ink" />
               </a>
             </div>
@@ -35,15 +36,28 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h4 className="font-mono font-bold text-xs uppercase tracking-widest text-saffron mb-6">Navigate</h4>
+            <h4 className="font-mono font-bold text-xs uppercase tracking-widest text-saffron mb-6">Explore</h4>
             <ul className="space-y-2">
-              {['About Us', 'Our Artisans', 'Shipping Info', 'Return Policy', 'Privacy Policy'].map((link) => (
-                <li key={link}>
-                  <a href="#" className="text-stone hover:text-saffron transition-colors text-sm font-display hover:translate-x-1 inline-block">
-                    → {link}
-                  </a>
-                </li>
-              ))}
+              <li>
+                <Link to="/" className="text-stone hover:text-saffron transition-colors text-sm font-display hover:translate-x-1 inline-block">
+                  → Home
+                </Link>
+              </li>
+              <li>
+                <Link to="/shop" className="text-stone hover:text-saffron transition-colors text-sm font-display hover:translate-x-1 inline-block">
+                  → Shop
+                </Link>
+              </li>
+              <li>
+                <Link to="/about" className="text-stone hover:text-saffron transition-colors text-sm font-display hover:translate-x-1 inline-block">
+                  → About Us
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" className="text-stone hover:text-saffron transition-colors text-sm font-display hover:translate-x-1 inline-block">
+                  → Contact
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -51,13 +65,31 @@ export default function Footer() {
           <div className="space-y-4">
             <h4 className="font-mono font-bold text-xs uppercase tracking-widest text-saffron mb-6">Collections</h4>
             <ul className="space-y-2">
-              {['Decorative Pieces', 'Traditional Crafts', 'Artistic Sculptures', 'Cultural Artifacts', 'Premium Collection'].map((link) => (
-                <li key={link}>
-                  <a href="#" className="text-stone hover:text-saffron transition-colors text-sm font-display hover:translate-x-1 inline-block">
-                    → {link}
-                  </a>
-                </li>
-              ))}
+              <li>
+                <Link to="/shop?category=Buddha Statues" className="text-stone hover:text-saffron transition-colors text-sm font-display hover:translate-x-1 inline-block">
+                  → Buddha Statues
+                </Link>
+              </li>
+              <li>
+                <Link to="/shop?category=Singing Bowls" className="text-stone hover:text-saffron transition-colors text-sm font-display hover:translate-x-1 inline-block">
+                  → Singing Bowls
+                </Link>
+              </li>
+              <li>
+                <Link to="/shop?category=Thangka Paintings" className="text-stone hover:text-saffron transition-colors text-sm font-display hover:translate-x-1 inline-block">
+                  → Thangka Paintings
+                </Link>
+              </li>
+              <li>
+                <Link to="/shop?category=Prayer Flags" className="text-stone hover:text-saffron transition-colors text-sm font-display hover:translate-x-1 inline-block">
+                  → Prayer Flags
+                </Link>
+              </li>
+              <li>
+                <Link to="/shop" className="text-stone hover:text-saffron transition-colors text-sm font-display hover:translate-x-1 inline-block">
+                  → View All
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -67,15 +99,19 @@ export default function Footer() {
             <div className="space-y-4">
               <div className="flex items-start space-x-3">
                 <MapPin className="h-5 w-5 text-saffron flex-shrink-0 mt-0.5" />
-                <span className="text-stone text-sm font-display">Thamel, Kathmandu, Nepal</span>
+                <span className="text-stone text-sm font-display">Tsum Valley, Gorkha<br />Kathmandu, Nepal</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-saffron flex-shrink-0" />
-                <span className="text-stone text-sm font-mono">+977-1-4701234</span>
+                <a href="tel:+977-1-4701234" className="text-stone text-sm font-mono hover:text-saffron transition-colors">
+                  +977-1-4701234
+                </a>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-saffron flex-shrink-0" />
-                <span className="text-stone text-sm font-mono">info@himalicrafts.com</span>
+                <a href="mailto:info@tsum.com" className="text-stone text-sm font-mono hover:text-saffron transition-colors">
+                  info@tsum.com
+                </a>
               </div>
             </div>
           </div>
@@ -88,7 +124,7 @@ export default function Footer() {
               © 2025 T HIMALAYAN INTL. ARTS & HANDICRAFT PVT. LTD.
             </p>
             <p className="text-stone text-xs font-display italic">
-              Preserving Nepal's Cultural Heritage
+              From the Sacred Tsum Valley to the World
             </p>
           </div>
         </div>

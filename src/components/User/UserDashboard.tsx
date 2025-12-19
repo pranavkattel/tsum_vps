@@ -169,7 +169,7 @@ export default function UserDashboard() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
                 <input
                   type="tel"
-                  defaultValue="+977-9841234567"
+                  defaultValue="+977-9709127173"
                   className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
               </div>

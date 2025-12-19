@@ -6,85 +6,113 @@ const nepalScenery = [
     id: 1,
     title: "Mount Everest",
     description: "The world's highest peak, standing at 8,848.86 meters above sea level",
-    image: "https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?w=800&auto=format&fit=crop",
+    image: "https://images.pexels.com/photos/2325446/pexels-photo-2325446.jpeg?auto=compress&cs=tinysrgb&w=1200",
     category: "Mountains"
   },
   {
     id: 2,
-    title: "Annapurna Range",
-    description: "Majestic Himalayan peaks reflecting in pristine mountain lakes",
-    image: "https://images.unsplash.com/photo-1605540436563-5bca919ae766?w=800&auto=format&fit=crop",
-    category: "Mountains"
+    title: "Boudhanath Stupa",
+    description: "One of the largest Buddhist stupas in the world, a UNESCO World Heritage Site in Kathmandu",
+    image: "https://images.pexels.com/photos/17536928/pexels-photo-17536928.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    category: "Heritage"
   },
   {
     id: 3,
     title: "Phewa Lake, Pokhara",
-    description: "Serene lake with stunning mountain reflections and traditional boats",
-    image: "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?w=800&auto=format&fit=crop",
+    description: "Serene lake with stunning Annapurna mountain reflections",
+    image: "https://images.pexels.com/photos/19694988/pexels-photo-19694988.jpeg?auto=compress&cs=tinysrgb&w=1200",
     category: "Lakes"
   },
   {
     id: 4,
-    title: "Kathmandu Valley",
-    description: "Ancient temples and traditional architecture nestled in green valleys",
-    image: "https://images.unsplash.com/photo-1584196603779-7b8b7c8c8b0c?w=800&auto=format&fit=crop",
-    category: "Valleys"
+    title: "Pashupatinath Temple",
+    description: "Sacred Hindu temple complex on the banks of Bagmati River, UNESCO World Heritage Site",
+    image: "https://images.pexels.com/photos/12211593/pexels-photo-12211593.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    category: "Heritage"
   },
   {
     id: 5,
-    title: "Himalayan Sunrise",
-    description: "Golden rays illuminating the snow-capped peaks at dawn",
-    image: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=800&auto=format&fit=crop",
+    title: "Annapurna Range",
+    description: "Majestic Himalayan peaks including Annapurna I (8,091m), the 10th highest mountain",
+    image: "https://images.pexels.com/photos/1559821/pexels-photo-1559821.jpeg?auto=compress&cs=tinysrgb&w=1200",
     category: "Mountains"
   },
   {
     id: 6,
-    title: "Rice Terraces",
-    description: "Traditional terraced farming on hillsides showcasing Nepal's agricultural heritage",
-    image: "https://images.unsplash.com/photo-1504870712357-65ea720d6078?w=800&auto=format&fit=crop",
-    category: "Landscapes"
+    title: "Swayambhunath (Monkey Temple)",
+    description: "Ancient Buddhist stupa overlooking Kathmandu Valley, over 2,500 years old",
+    image: "https://images.pexels.com/photos/3629537/pexels-photo-3629537.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    category: "Heritage"
   },
   {
     id: 7,
-    title: "Swayambhunath Stupa",
-    description: "The iconic Monkey Temple overlooking Kathmandu Valley",
-    image: "https://images.unsplash.com/photo-1571408782488-65b2c0e0a2f3?w=800&auto=format&fit=crop",
+    title: "Durbar Square, Kathmandu",
+    description: "Historic square showcasing Newar architecture and ancient royal palaces",
+    image: "https://images.pexels.com/photos/13523395/pexels-photo-13523395.jpeg?auto=compress&cs=tinysrgb&w=1200",
     category: "Heritage"
   },
   {
     id: 8,
-    title: "Langtang Valley",
-    description: "Pristine valley surrounded by towering Himalayan peaks",
-    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&auto=format&fit=crop",
-    category: "Valleys"
+    title: "Machapuchare (Fishtail Mountain)",
+    description: "Sacred mountain with distinctive double peak, never been climbed",
+    image: "https://images.pexels.com/photos/11599532/pexels-photo-11599532.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    category: "Mountains"
   },
   {
     id: 9,
-    title: "Mountain Monasteries",
-    description: "Ancient Buddhist monasteries perched on mountain cliffs",
-    image: "https://images.unsplash.com/photo-1552055564-8a0b0e8f9e3e?w=800&auto=format&fit=crop",
+    title: "Patan Durbar Square",
+    description: "Ancient city square with exquisite temples and traditional Newari architecture",
+    image: "https://images.pexels.com/photos/17536927/pexels-photo-17536927.jpeg?auto=compress&cs=tinysrgb&w=1200",
     category: "Heritage"
   },
   {
     id: 10,
-    title: "Himalayan Wildlife",
-    description: "Diverse flora and fauna in the world's highest mountains",
-    image: "https://images.unsplash.com/photo-1516825513084-7a3397fcd108?w=800&auto=format&fit=crop",
+    title: "Chitwan National Park",
+    description: "UNESCO World Heritage Site, home to Bengal tigers, one-horned rhinos, and diverse wildlife",
+    image: "https://images.pexels.com/photos/4577793/pexels-photo-4577793.jpeg?auto=compress&cs=tinysrgb&w=1200",
     category: "Nature"
   },
   {
     id: 11,
-    title: "Chitwan National Park",
-    description: "Lush subtropical forests home to rhinos, tigers, and elephants",
-    image: "https://images.unsplash.com/photo-1564760055775-d63b17a55c44?w=800&auto=format&fit=crop",
-    category: "Nature"
+    title: "Bhaktapur Durbar Square",
+    description: "Medieval city square with 55-window palace and ancient temples",
+    image: "https://images.pexels.com/photos/4967119/pexels-photo-4967119.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    category: "Heritage"
   },
   {
     id: 12,
-    title: "Prayer Flags",
-    description: "Colorful prayer flags fluttering in the mountain breeze",
-    image: "https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=800&auto=format&fit=crop",
+    title: "Lumbini - Birthplace of Buddha",
+    description: "Sacred pilgrimage site and UNESCO World Heritage Site where Buddha was born",
+    image: "https://images.pexels.com/photos/6207876/pexels-photo-6207876.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    category: "Heritage"
+  },
+  {
+    id: 13,
+    title: "Himalayan Prayer Flags",
+    description: "Colorful prayer flags in the Himalayas carrying blessings on mountain winds",
+    image: "https://images.pexels.com/photos/1619310/pexels-photo-1619310.jpeg?auto=compress&cs=tinysrgb&w=1200",
     category: "Culture"
+  },
+  {
+    id: 14,
+    title: "Langtang Valley",
+    description: "Beautiful valley known as the 'Valley of Glaciers' in Langtang National Park",
+    image: "https://images.pexels.com/photos/4474536/pexels-photo-4474536.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    category: "Valleys"
+  },
+  {
+    id: 15,
+    title: "Rara Lake",
+    description: "Nepal's largest and deepest lake, surrounded by pristine alpine forests",
+    image: "https://images.pexels.com/photos/8828523/pexels-photo-8828523.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    category: "Lakes"
+  },
+  {
+    id: 16,
+    title: "Tengboche Monastery",
+    description: "Famous Buddhist monastery on the trail to Everest Base Camp",
+    image: "https://images.pexels.com/photos/8533496/pexels-photo-8533496.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    category: "Heritage"
   }
 ];
 

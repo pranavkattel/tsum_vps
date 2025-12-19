@@ -1,5 +1,5 @@
 import express from 'express';
-import { sendProductInquiry, sendBulkInquiry } from '../services/emailService.js';
+import { sendProductInquiry, sendBulkInquiry, sendContactFormEmail } from '../services/emailService.js';
 import User from '../models/User.js';
 
 const router = express.Router();
@@ -94,6 +94,40 @@ router.post('/bulk-inquiry', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to send bulk inquiry email',
+      error: error.message
+    });
+  }
+});
+
+// Send contact form email
+router.post('/contact', async (req, res) => {
+  try {
+    const { name, email, subject, message } = req.body;
+
+    if (!name || !email || !subject || !message) {
+      return res.status(400).json({
+        success: false,
+        message: 'All fields are required: name, email, subject, message'
+      });
+    }
+
+    const result = await sendContactFormEmail({
+      name,
+      email,
+      subject,
+      message
+    });
+
+    res.json({
+      success: true,
+      message: 'Contact form submitted successfully. We will get back to you soon!'
+    });
+
+  } catch (error) {
+    console.error('Error sending contact form email:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to send contact form. Please try again.',
       error: error.message
     });
   }

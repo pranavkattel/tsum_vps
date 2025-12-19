@@ -23,7 +23,7 @@ const AdminDashboard: React.FC = () => {
   const [showEdit, setShowEdit] = useState<any | null>(null);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
-  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'orders' | 'users'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'users'>('overview');
   const [users, setUsers] = useState<any[]>([]);
   const perPage = 12;
   const navigate = useNavigate();
@@ -200,7 +200,7 @@ const AdminDashboard: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-4xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
-              <p className="text-gray-600">Manage your store, products, and orders</p>
+              <p className="text-gray-600">Manage your store, products, and inquiries</p>
             </div>
             <button
               onClick={() => navigate('/admin/add')}
@@ -236,17 +236,6 @@ const AdminDashboard: React.FC = () => {
             >
               <Package className="w-4 h-4" />
               Products
-            </button>
-            <button
-              onClick={() => setActiveTab('orders')}
-              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
-                activeTab === 'orders'
-                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md'
-                  : 'text-gray-600 hover:bg-gray-100'
-              }`}
-            >
-              <ShoppingBag className="w-4 h-4" />
-              Orders
             </button>
             <button
               onClick={() => setActiveTab('users')}
@@ -549,54 +538,6 @@ const AdminDashboard: React.FC = () => {
                     Next
                   </button>
                 </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Orders Tab */}
-        {activeTab === 'orders' && (
-          <div className="bg-white p-6 rounded-xl shadow-lg">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">All Orders</h2>
-            {loading && <div className="text-center py-8 text-gray-500">Loading orders...</div>}
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-lg">
-                {error}
-              </div>
-            )}
-            {!loading && data && data.recentOrders && (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b-2 border-gray-200">
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">Order #</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">Customer</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">Items</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">Total</th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-700">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.recentOrders.map((o: any) => (
-                      <tr key={o._id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                        <td className="py-4 px-4 font-medium">{o.orderNumber}</td>
-                        <td className="py-4 px-4">{o.user ? `${o.user.firstName} ${o.user.lastName}` : 'Guest'}</td>
-                        <td className="py-4 px-4">{o.items.length}</td>
-                        <td className="py-4 px-4 font-bold text-amber-600">₨ {o.totalAmount.toFixed(2)}</td>
-                        <td className="py-4 px-4">
-                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                            o.orderStatus === 'delivered' ? 'bg-green-100 text-green-700' :
-                            o.orderStatus === 'shipped' ? 'bg-blue-100 text-blue-700' :
-                            o.orderStatus === 'processing' ? 'bg-yellow-100 text-yellow-700' :
-                            'bg-gray-100 text-gray-700'
-                          }`}>
-                            {o.orderStatus}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
               </div>
             )}
           </div>

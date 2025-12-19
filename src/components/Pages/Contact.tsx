@@ -8,13 +8,45 @@ export default function Contact() {
     subject: '',
     message: ''
   });
+  const [loading, setLoading] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log('Form submitted:', formData);
-    // Reset form
-    setFormData({ name: '', email: '', subject: '', message: '' });
+    setLoading(true);
+    setSubmitStatus(null);
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/email/contact`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSubmitStatus({
+          type: 'success',
+          message: 'Thank you for your message! We will get back to you soon via email.'
+        });
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      } else {
+        setSubmitStatus({
+          type: 'error',
+          message: data.message || 'Failed to send message. Please try again.'
+        });
+      }
+    } catch (error) {
+      setSubmitStatus({
+        type: 'error',
+        message: 'Failed to send message. Please check your connection and try again.'
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -69,7 +101,7 @@ export default function Contact() {
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">Phone</h3>
                   <p className="text-gray-600">
                     +977-1-4701234<br />
-                    +977-9841234567
+                    +977-9709127173
                   </p>
                 </div>
               </div>
@@ -111,6 +143,18 @@ export default function Contact() {
           {/* Contact Form */}
           <div className="bg-white rounded-xl shadow-lg p-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">Send us a Message</h2>
+            
+            {/* Status Messages */}
+            {submitStatus && (
+              <div className={`mb-6 p-4 rounded-lg ${
+                submitStatus.type === 'success' 
+                  ? 'bg-green-50 border border-green-200 text-green-800' 
+                  : 'bg-red-50 border border-red-200 text-red-800'
+              }`}>
+                {submitStatus.message}
+              </div>
+            )}
+            
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
@@ -174,10 +218,20 @@ export default function Contact() {
 
               <button
                 type="submit"
-                className="w-full bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
+                disabled={loading}
+                className="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
               >
-                <Send className="h-5 w-5" />
-                Send Message
+                {loading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <Send className="h-5 w-5" />
+                    Send Message
+                  </>
+                )}
               </button>
             </form>
           </div>

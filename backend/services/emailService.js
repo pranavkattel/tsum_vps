@@ -127,7 +127,7 @@ export const sendProductInquiry = async (productDetails) => {
     console.log('Inquiry email sent to business');
 
     // 2. Send confirmation email TO CUSTOMER
-    const whatsappNumber = '9779820229166';
+    const whatsappNumber = '9779709127173';
     const whatsappMessage = encodeURIComponent(`Hi, I'm interested in ${name}. What is the price and availability?`);
     const whatsappLink = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
 
@@ -164,7 +164,7 @@ export const sendProductInquiry = async (productDetails) => {
                 📱 Chat on WhatsApp
               </a>
               <p style="margin-top: 15px; font-size: 14px; color: #666;">
-                WhatsApp: +977 9820229166
+                WhatsApp: +977 9709127173
               </p>
             </div>
             
@@ -322,6 +322,152 @@ Received on: ${new Date().toLocaleString()}
 
   } catch (error) {
     console.error('Failed to send bulk inquiry email:', error);
+    throw new Error(`Email sending failed: ${error.message}`);
+  }
+};
+
+/**
+ * Send contact form email to both business and customer
+ * @param {Object} contactData - Contact form data
+ * @param {string} contactData.name - Customer's name
+ * @param {string} contactData.email - Customer's email
+ * @param {string} contactData.subject - Message subject
+ * @param {string} contactData.message - Customer's message
+ */
+export const sendContactFormEmail = async (contactData) => {
+  try {
+    const transporter = createTransporter();
+    const { name, email, subject, message } = contactData;
+
+    if (!email || !name || !subject || !message) {
+      throw new Error('All contact form fields are required');
+    }
+
+    // 1. Send email TO BUSINESS
+    const businessHtml = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background-color: #d97706; color: white; padding: 20px; text-align: center; }
+          .content { background-color: #f9f9f9; padding: 20px; border: 1px solid #ddd; }
+          .info-box { background-color: white; padding: 15px; margin: 15px 0; border-left: 4px solid #d97706; }
+          .message-box { background-color: white; padding: 20px; margin: 20px 0; border: 1px solid #ddd; border-radius: 5px; }
+          .footer { text-align: center; margin-top: 20px; color: #666; font-size: 12px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>📧 New Contact Form Submission</h1>
+          </div>
+          <div class="content">
+            <div class="info-box">
+              <h2 style="color: #d97706; margin-top: 0;">Contact Information:</h2>
+              <p><strong>Name:</strong> ${name}</p>
+              <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
+              <p><strong>Subject:</strong> ${subject}</p>
+            </div>
+            
+            <div class="message-box">
+              <h3 style="color: #d97706;">Message:</h3>
+              <p style="white-space: pre-wrap;">${message}</p>
+            </div>
+            
+            <p style="margin-top: 20px; padding: 15px; background-color: #fff3cd; border-left: 4px solid #d97706;">
+              <strong>Action Required:</strong> Please respond to this inquiry at <a href="mailto:${email}">${email}</a>
+            </p>
+          </div>
+          <div class="footer">
+            <p>This message was sent from the Tsum Website Contact Form</p>
+            <p>Received on: ${new Date().toLocaleString()}</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const businessMailOptions = {
+      from: `"Tsum Contact Form" <${process.env.EMAIL_USER}>`,
+      to: process.env.EMAIL_USER,
+      replyTo: email,
+      subject: `New Contact Form: ${subject}`,
+      html: businessHtml,
+      text: `New Contact Form Submission\n\nFrom: ${name} (${email})\nSubject: ${subject}\n\nMessage:\n${message}\n\nReceived: ${new Date().toLocaleString()}`,
+    };
+
+    await transporter.sendMail(businessMailOptions);
+    console.log('Contact form email sent to business');
+
+    // 2. Send confirmation email TO CUSTOMER
+    const customerHtml = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background-color: #d97706; color: white; padding: 20px; text-align: center; }
+          .content { background-color: #f9f9f9; padding: 20px; border: 1px solid #ddd; }
+          .message-box { background-color: white; padding: 20px; margin: 20px 0; border: 1px solid #ddd; border-radius: 5px; }
+          .footer { text-align: center; margin-top: 20px; color: #666; font-size: 12px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>✅ Thank You for Contacting Us!</h1>
+          </div>
+          <div class="content">
+            <p>Dear ${name},</p>
+            
+            <p>Thank you for reaching out to us through our contact form. We have received your message and will get back to you as soon as possible.</p>
+            
+            <div class="message-box">
+              <h3 style="color: #d97706;">Your Message Summary:</h3>
+              <p><strong>Subject:</strong> ${subject}</p>
+              <p><strong>Message:</strong></p>
+              <p style="white-space: pre-wrap; color: #666;">${message}</p>
+            </div>
+            
+            <p>We typically respond within 24-48 hours during business days. If your inquiry is urgent, please feel free to reach out to us directly via:</p>
+            
+            <ul style="background-color: white; padding: 20px; margin: 15px 0; border-left: 4px solid #d97706;">
+              <li><strong>Email:</strong> ${process.env.EMAIL_USER}</li>
+              <li><strong>Phone:</strong> +977-1-4701234</li>
+              <li><strong>WhatsApp:</strong> +977-9709127173</li>
+            </ul>
+            
+            <p>Thank you for your interest in Tsum - Nepali Crafts!</p>
+            
+            <p style="margin-top: 30px;">Best regards,<br><strong>The Tsum Team</strong></p>
+          </div>
+          <div class="footer">
+            <p>This is an automated confirmation from Tsum Website</p>
+            <p>Please do not reply to this email. Contact us at ${process.env.EMAIL_USER}</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const customerMailOptions = {
+      from: `"Tsum - Nepali Crafts" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: `Thank you for contacting Tsum - We received your message`,
+      html: customerHtml,
+      text: `Dear ${name},\n\nThank you for reaching out to us. We have received your message about "${subject}" and will get back to you as soon as possible.\n\nYour Message:\n${message}\n\nWe typically respond within 24-48 hours during business days.\n\nBest regards,\nThe Tsum Team\n\n---\nThis is an automated confirmation. Please contact us at ${process.env.EMAIL_USER}`,
+    };
+
+    await transporter.sendMail(customerMailOptions);
+    console.log('Confirmation email sent to customer');
+
+    return { success: true, message: 'Contact form submitted successfully' };
+
+  } catch (error) {
+    console.error('Failed to send contact form email:', error);
     throw new Error(`Email sending failed: ${error.message}`);
   }
 };

@@ -141,15 +141,6 @@ export default function Header({ onPageChange, currentPage }: HeaderProps) {
                     >
                       Profile
                     </button>
-                    <button
-                      onClick={() => {
-                        onPageChange('orders');
-                        setShowUserMenu(false);
-                      }}
-                      className="w-full text-left px-4 py-3 text-sm font-mono text-ink hover:bg-saffron transition-colors"
-                    >
-                      Orders
-                    </button>
                     <div className="border-t-3 border-ink"></div>
                     <button
                       onClick={handleLogout}
