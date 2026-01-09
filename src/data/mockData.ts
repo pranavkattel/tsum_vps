@@ -385,7 +385,7 @@ export const mockProducts: Product[] = [
 ];
 
 // Build category list for Collection view
-const categoryNames = ['Statues', 'Bells', 'Mala', 'Locket', 'Bowls & Karuwa', 'Singing Bowl'] as const;
+const categoryNames = ['bell', 'bowls and karuwa', 'locket', 'mala', 'singing-bowl', 'statues', 'stone sculpture'] as const;
 
 function pickImageForCategory(cat: string): string {
   const p = mockProducts.find(p => p.category === cat && p.images && p.images.length > 0);

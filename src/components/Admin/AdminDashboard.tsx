@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Package, Users, TrendingUp, Search, Edit, Trash2, Plus, ShoppingBag, MessageCircle, Mail } from 'lucide-react';
+import { Package, Users, TrendingUp, Search, Edit, Trash2, Plus, ShoppingBag, MessageCircle, Mail, Mountain } from 'lucide-react';
 import authService from '../../services/authService';
 import ProductEditModal from './ProductEditModal';
+import GalleryEditModal from './GalleryEditModal';
 
 type DashboardData = {
   totalInquiries: number;
@@ -23,8 +24,11 @@ const AdminDashboard: React.FC = () => {
   const [showEdit, setShowEdit] = useState<any | null>(null);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
-  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'users'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'users' | 'gallery'>('overview');
   const [users, setUsers] = useState<any[]>([]);
+  const [galleryItems, setGalleryItems] = useState<any[]>([]);
+  const [showGalleryEdit, setShowGalleryEdit] = useState<any | null>(null);
+  const [showAddGallery, setShowAddGallery] = useState(false);
   const perPage = 12;
   const navigate = useNavigate();
 
@@ -104,7 +108,23 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  const fetchGallery = async () => {
+    try {
+      const token = authService.getToken();
+      const url = `${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/gallery`;
+      const res = await fetch(url, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message || 'Error fetching gallery');
+      setGalleryItems(json.data || []);
+    } catch (err: any) {
+      console.error('Fetch gallery error:', err.message);
+    }
+  };
+
   useEffect(() => { fetchUsers(); }, []);
+  useEffect(() => { fetchGallery(); }, []);
 
   const filtered = products.filter(p => {
     if (!search) return true;
@@ -169,7 +189,7 @@ const AdminDashboard: React.FC = () => {
             {images.map((im, i) => (
               <button key={i} onClick={() => showAt(i)} className={`rounded overflow-hidden border ${i === index ? 'ring-2 ring-amber-400' : ''}`}>
                 {/* eslint-disable-next-line jsx-a11y/alt-text */}
-                <img src={getDisplayImage(im)} alt={`${alt || ''} ${i + 1}`} className="w-16 h-12 object-cover block" onError={(e:any)=>{ /* let main handle errors */ }} />
+                <img src={getDisplayImage(im)} alt={`${alt || ''} ${i + 1}`} className="w-16 h-12 object-cover block" onError={(e: any) => { /* let main handle errors */ }} />
               </button>
             ))}
           </div>
@@ -217,36 +237,43 @@ const AdminDashboard: React.FC = () => {
           <div className="flex gap-2 bg-white p-2 rounded-xl shadow-sm">
             <button
               onClick={() => setActiveTab('overview')}
-              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
-                activeTab === 'overview'
-                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md'
-                  : 'text-gray-600 hover:bg-gray-100'
-              }`}
+              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${activeTab === 'overview'
+                ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md'
+                : 'text-gray-600 hover:bg-gray-100'
+                }`}
             >
               <TrendingUp className="w-4 h-4" />
               Overview
             </button>
             <button
               onClick={() => setActiveTab('products')}
-              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
-                activeTab === 'products'
-                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md'
-                  : 'text-gray-600 hover:bg-gray-100'
-              }`}
+              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${activeTab === 'products'
+                ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md'
+                : 'text-gray-600 hover:bg-gray-100'
+                }`}
             >
               <Package className="w-4 h-4" />
               Products
             </button>
             <button
               onClick={() => setActiveTab('users')}
-              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
-                activeTab === 'users'
-                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md'
-                  : 'text-gray-600 hover:bg-gray-100'
-              }`}
+              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${activeTab === 'users'
+                ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md'
+                : 'text-gray-600 hover:bg-gray-100'
+                }`}
             >
               <Users className="w-4 h-4" />
               Users
+            </button>
+            <button
+              onClick={() => setActiveTab('gallery')}
+              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${activeTab === 'gallery'
+                  ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-md'
+                  : 'text-gray-600 hover:bg-gray-100'
+                }`}
+            >
+              <Mountain className="w-4 h-4" />
+              Gallery
             </button>
           </div>
         </div>
@@ -325,16 +352,16 @@ const AdminDashboard: React.FC = () => {
                 {!loading && data && data.recentInquiries && data.recentInquiries.length > 0 ? (
                   <div className="space-y-3 max-h-96 overflow-y-auto">
                     {data.recentInquiries.map((inquiry: any) => {
-                      const whatsappDate = inquiry.inquiries?.whatsapp?.lastInquiry 
-                        ? new Date(inquiry.inquiries.whatsapp.lastInquiry) 
+                      const whatsappDate = inquiry.inquiries?.whatsapp?.lastInquiry
+                        ? new Date(inquiry.inquiries.whatsapp.lastInquiry)
                         : null;
-                      const emailDate = inquiry.inquiries?.email?.lastInquiry 
-                        ? new Date(inquiry.inquiries.email.lastInquiry) 
+                      const emailDate = inquiry.inquiries?.email?.lastInquiry
+                        ? new Date(inquiry.inquiries.email.lastInquiry)
                         : null;
-                      const latestDate = whatsappDate && emailDate 
+                      const latestDate = whatsappDate && emailDate
                         ? (whatsappDate > emailDate ? whatsappDate : emailDate)
                         : (whatsappDate || emailDate);
-                      
+
                       const whatsappCount = inquiry.inquiries?.whatsapp?.count || 0;
                       const emailCount = inquiry.inquiries?.email?.count || 0;
                       const totalCount = whatsappCount + emailCount;
@@ -574,9 +601,8 @@ const AdminDashboard: React.FC = () => {
                       <td className="py-4 px-4 text-sm text-gray-600">{user.email}</td>
                       <td className="py-4 px-4 text-sm text-gray-600">{user.phone || '—'}</td>
                       <td className="py-4 px-4">
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          user.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'
-                        }`}>
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${user.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'
+                          }`}>
                           {user.role}
                         </span>
                       </td>
@@ -605,9 +631,8 @@ const AdminDashboard: React.FC = () => {
                         </div>
                       </td>
                       <td className="py-4 px-4">
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          user.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                        }`}>
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${user.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                          }`}>
                           {user.isActive ? 'Active' : 'Inactive'}
                         </span>
                       </td>
@@ -629,11 +654,105 @@ const AdminDashboard: React.FC = () => {
           </div>
         )}
 
+        {/* Gallery Tab */}
+        {activeTab === 'gallery' && (
+          <div className="bg-white p-6 rounded-xl shadow-lg">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Nepal Gallery</h2>
+              <div className="flex items-center gap-4">
+                <div className="text-sm text-gray-600 bg-gray-100 px-4 py-2 rounded-lg">
+                  Total: <span className="font-bold">{galleryItems.filter(g => g.isActive).length}</span>
+                </div>
+                <button
+                  onClick={() => setShowAddGallery(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg hover:shadow-lg transition-all"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Image
+                </button>
+              </div>
+            </div>
+
+            {/* Gallery Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {galleryItems.filter(g => g.isActive).map(item => (
+                <div key={item._id} className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-200 hover:border-emerald-500">
+                  <div className="h-48 w-full bg-gray-100 overflow-hidden">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-full object-cover"
+                      onError={(e: any) => {
+                        e.target.src = 'https://via.placeholder.com/300x200?text=No+Image';
+                      }}
+                    />
+                  </div>
+                  <div className="p-4">
+                    <h3 className="font-semibold text-gray-900 mb-1 truncate">{item.title}</h3>
+                    <div className="text-xs text-emerald-600 font-medium mb-2">{item.category}</div>
+                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">{item.description}</p>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setShowGalleryEdit(item)}
+                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors"
+                      >
+                        <Edit className="w-4 h-4" />
+                        Edit
+                      </button>
+                      <button
+                        onClick={async () => {
+                          const token = authService.getToken();
+                          if (!token) {
+                            if (confirm('You must be logged in as an admin to delete gallery items. Go to login?')) navigate('/login');
+                            return;
+                          }
+                          if (!confirm(`Delete "${item.title}"?`)) return;
+                          try {
+                            const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/gallery/${item._id}`, {
+                              method: 'DELETE',
+                              headers: { Authorization: `Bearer ${token}` }
+                            });
+                            const json = await res.json();
+                            if (!res.ok) throw new Error(json.message || 'Delete failed');
+                            fetchGallery();
+                          } catch (err: any) {
+                            console.error(err);
+                            alert(err.message || 'Delete failed');
+                          }
+                        }}
+                        className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {galleryItems.filter(g => g.isActive).length === 0 && (
+              <div className="text-center py-12 text-gray-500">
+                <Mountain className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                <p className="text-lg font-medium">No gallery images found</p>
+                <p className="text-sm">Click "Add Image" to add your first gallery image</p>
+              </div>
+            )}
+          </div>
+        )}
+
         {showEdit && (
           <ProductEditModal
             product={showEdit}
             onClose={() => setShowEdit(null)}
             onSaved={() => { fetchProducts(); setShowEdit(null); }}
+          />
+        )}
+
+        {(showGalleryEdit || showAddGallery) && (
+          <GalleryEditModal
+            galleryItem={showGalleryEdit}
+            onClose={() => { setShowGalleryEdit(null); setShowAddGallery(false); }}
+            onSaved={() => { fetchGallery(); setShowGalleryEdit(null); setShowAddGallery(false); }}
           />
         )}
       </div>

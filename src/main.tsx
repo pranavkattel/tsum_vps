@@ -5,11 +5,13 @@ import App from './App';
 import ScrollToTop from './components/ScrollToTop';
 import BackgroundAudio from './components/BackgroundAudio';
 import FloatingWhatsApp from './components/ui/FloatingWhatsApp';
+import SEOHead from './components/SEO/SEOHead';
 import './index.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
+      <SEOHead />
       <ScrollToTop />
       <BackgroundAudio />
       <App />

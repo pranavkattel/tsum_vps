@@ -22,4 +22,19 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    // Generate source maps for better debugging
+    sourcemap: false,
+    // Optimize for production (uses esbuild by default - faster than terser)
+    minify: 'esbuild',
+    // Code splitting for better SEO and performance
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'ui-vendor': ['lucide-react'],
+        },
+      },
+    },
+  },
 });

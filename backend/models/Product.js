@@ -17,7 +17,6 @@ const productSchema = new mongoose.Schema({
   },
   price: {
     type: Number,
-    required: [true, 'Product price is required'],
     min: [0, 'Price cannot be negative']
   },
   originalPrice: {
@@ -33,8 +32,7 @@ const productSchema = new mongoose.Schema({
     required: [true, 'Product category is required']
   },
   artisan: {
-    type: String,
-    required: true
+    type: String
   },
   materials: [{
     type: String
@@ -50,9 +48,8 @@ const productSchema = new mongoose.Schema({
   },
   stock: {
     type: Number,
-    required: [true, 'Stock quantity is required'],
     min: [0, 'Stock cannot be negative'],
-    default: 0
+    default: 999
   },
   featured: {
     type: Boolean,

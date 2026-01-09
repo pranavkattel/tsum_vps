@@ -27,7 +27,7 @@ const ProductEditModal: React.FC<Props> = ({ product, onClose, onSaved }) => {
     setCurrentImages(product.images || []);
   }, [product]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target as any;
     setForm((s: any) => ({ ...s, [name]: value }));
   };
@@ -151,57 +151,29 @@ const ProductEditModal: React.FC<Props> = ({ product, onClose, onSaved }) => {
                   name="description"
                   value={form.description || ''}
                   onChange={handleChange}
-                  rows={4}
+                  rows={8}
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-amber-500 focus:outline-none transition-colors resize-none"
                   placeholder="Enter product description"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Price (₨)</label>
-                  <input
-                    name="price"
-                    type="number"
-                    value={form.price || ''}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-amber-500 focus:outline-none transition-colors"
-                    placeholder="0"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Stock</label>
-                  <input
-                    name="stock"
-                    type="number"
-                    value={form.stock || 0}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-amber-500 focus:outline-none transition-colors"
-                    placeholder="0"
-                  />
-                </div>
-              </div>
-
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Category</label>
-                <input
+                <select
                   name="category"
                   value={form.category || ''}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-amber-500 focus:outline-none transition-colors"
-                  placeholder="e.g., Religious Statues"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Artisan</label>
-                <input
-                  name="artisan"
-                  value={form.artisan || ''}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-amber-500 focus:outline-none transition-colors"
-                  placeholder="Artisan name"
-                />
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-amber-500 focus:outline-none transition-colors bg-white"
+                >
+                  <option value="">Select a category</option>
+                  <option value="bell">Bell</option>
+                  <option value="bowls and karuwa">Bowls and Karuwa</option>
+                  <option value="locket">Locket</option>
+                  <option value="mala">Mala</option>
+                  <option value="singing-bowl">Singing Bowl</option>
+                  <option value="statues">Statues</option>
+                  <option value="stone sculpture">Stone Sculpture</option>
+                </select>
               </div>
             </div>
 

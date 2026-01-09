@@ -1,130 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mountain, X } from 'lucide-react';
-
-const nepalScenery = [
-  {
-    id: 1,
-    title: "Mount Everest",
-    description: "The world's highest peak, standing at 8,848.86 meters above sea level",
-    image: "https://images.pexels.com/photos/2325446/pexels-photo-2325446.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    category: "Mountains"
-  },
-  {
-    id: 2,
-    title: "Boudhanath Stupa",
-    description: "One of the largest Buddhist stupas in the world, a UNESCO World Heritage Site in Kathmandu",
-    image: "https://images.pexels.com/photos/17536928/pexels-photo-17536928.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    category: "Heritage"
-  },
-  {
-    id: 3,
-    title: "Phewa Lake, Pokhara",
-    description: "Serene lake with stunning Annapurna mountain reflections",
-    image: "https://images.pexels.com/photos/19694988/pexels-photo-19694988.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    category: "Lakes"
-  },
-  {
-    id: 4,
-    title: "Pashupatinath Temple",
-    description: "Sacred Hindu temple complex on the banks of Bagmati River, UNESCO World Heritage Site",
-    image: "https://images.pexels.com/photos/12211593/pexels-photo-12211593.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    category: "Heritage"
-  },
-  {
-    id: 5,
-    title: "Annapurna Range",
-    description: "Majestic Himalayan peaks including Annapurna I (8,091m), the 10th highest mountain",
-    image: "https://images.pexels.com/photos/1559821/pexels-photo-1559821.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    category: "Mountains"
-  },
-  {
-    id: 6,
-    title: "Swayambhunath (Monkey Temple)",
-    description: "Ancient Buddhist stupa overlooking Kathmandu Valley, over 2,500 years old",
-    image: "https://images.pexels.com/photos/3629537/pexels-photo-3629537.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    category: "Heritage"
-  },
-  {
-    id: 7,
-    title: "Durbar Square, Kathmandu",
-    description: "Historic square showcasing Newar architecture and ancient royal palaces",
-    image: "https://images.pexels.com/photos/13523395/pexels-photo-13523395.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    category: "Heritage"
-  },
-  {
-    id: 8,
-    title: "Machapuchare (Fishtail Mountain)",
-    description: "Sacred mountain with distinctive double peak, never been climbed",
-    image: "https://images.pexels.com/photos/11599532/pexels-photo-11599532.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    category: "Mountains"
-  },
-  {
-    id: 9,
-    title: "Patan Durbar Square",
-    description: "Ancient city square with exquisite temples and traditional Newari architecture",
-    image: "https://images.pexels.com/photos/17536927/pexels-photo-17536927.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    category: "Heritage"
-  },
-  {
-    id: 10,
-    title: "Chitwan National Park",
-    description: "UNESCO World Heritage Site, home to Bengal tigers, one-horned rhinos, and diverse wildlife",
-    image: "https://images.pexels.com/photos/4577793/pexels-photo-4577793.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    category: "Nature"
-  },
-  {
-    id: 11,
-    title: "Bhaktapur Durbar Square",
-    description: "Medieval city square with 55-window palace and ancient temples",
-    image: "https://images.pexels.com/photos/4967119/pexels-photo-4967119.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    category: "Heritage"
-  },
-  {
-    id: 12,
-    title: "Lumbini - Birthplace of Buddha",
-    description: "Sacred pilgrimage site and UNESCO World Heritage Site where Buddha was born",
-    image: "https://images.pexels.com/photos/6207876/pexels-photo-6207876.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    category: "Heritage"
-  },
-  {
-    id: 13,
-    title: "Himalayan Prayer Flags",
-    description: "Colorful prayer flags in the Himalayas carrying blessings on mountain winds",
-    image: "https://images.pexels.com/photos/1619310/pexels-photo-1619310.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    category: "Culture"
-  },
-  {
-    id: 14,
-    title: "Langtang Valley",
-    description: "Beautiful valley known as the 'Valley of Glaciers' in Langtang National Park",
-    image: "https://images.pexels.com/photos/4474536/pexels-photo-4474536.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    category: "Valleys"
-  },
-  {
-    id: 15,
-    title: "Rara Lake",
-    description: "Nepal's largest and deepest lake, surrounded by pristine alpine forests",
-    image: "https://images.pexels.com/photos/8828523/pexels-photo-8828523.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    category: "Lakes"
-  },
-  {
-    id: 16,
-    title: "Tengboche Monastery",
-    description: "Famous Buddhist monastery on the trail to Everest Base Camp",
-    image: "https://images.pexels.com/photos/8533496/pexels-photo-8533496.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    category: "Heritage"
-  }
-];
 
 const categories = ["All", "Mountains", "Lakes", "Valleys", "Heritage", "Nature", "Landscapes", "Culture"];
 
+interface GalleryImage {
+  _id: string;
+  title: string;
+  description: string;
+  image: string;
+  category: string;
+  isActive: boolean;
+}
+
 export default function NepalGallery() {
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [selectedImage, setSelectedImage] = useState<typeof nepalScenery[0] | null>(null);
+  const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
+  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchGallery = async () => {
+      try {
+        const url = `${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/gallery`;
+        const res = await fetch(url);
+        const json = await res.json();
+        if (json.success) {
+          setGalleryImages(json.data || []);
+        }
+      } catch (err) {
+        console.error('Error fetching gallery:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGallery();
+  }, []);
 
   const filteredScenery = selectedCategory === "All" 
-    ? nepalScenery 
-    : nepalScenery.filter(item => item.category === selectedCategory);
+    ? galleryImages 
+    : galleryImages.filter(item => item.category === selectedCategory);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-rice py-16 flex items-center justify-center">
+        <div className="text-center">
+          <Mountain className="w-16 h-16 text-terracotta mx-auto mb-4 animate-pulse" />
+          <p className="text-charcoal text-lg font-display">Loading gallery...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-rice py-16">
@@ -166,7 +92,7 @@ export default function NepalGallery() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredScenery.map((scenery) => (
             <div
-              key={scenery.id}
+              key={scenery._id}
               onClick={() => setSelectedImage(scenery)}
               className="group cursor-pointer bg-white border-4 border-ink shadow-brutal hover:shadow-brutal-lg transition-all hover:translate-x-1 hover:translate-y-1 overflow-hidden"
             >

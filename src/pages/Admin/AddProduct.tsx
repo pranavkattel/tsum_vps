@@ -77,15 +77,11 @@ const AddProductPage: React.FC = () => {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-terracotta font-bold">•</span>
-                  <span>Include accurate dimensions and materials</span>
+                  <span>Select the most appropriate category for easy discovery</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-terracotta font-bold">•</span>
-                  <span>Set competitive pricing based on craftsmanship quality</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-terracotta font-bold">•</span>
-                  <span>Update stock levels accurately to avoid overselling</span>
+                  <span>All products are always in stock and available for inquiries</span>
                 </li>
               </ul>
             </div>

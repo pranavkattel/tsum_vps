@@ -18,8 +18,9 @@ export default function Footer() {
               </h3>
             </div>
             <p className="text-stone leading-relaxed text-sm font-display italic">
-              Authentic handcrafted treasures from the sacred Tsum Valley, 
-              preserving ancient Himalayan traditions through master artisanship.
+              Authentic Himalayan handicrafts from Tsum Valley, Nepal. 
+              Tibetan singing bowls, Buddhist prayer wheels, sacred thangka paintings, 
+              and ritual items handcrafted by master artisans.
             </p>
             <div className="flex space-x-3">
               <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="p-2 border-3 border-rice hover:bg-saffron hover:border-saffron transition-colors group">
@@ -63,16 +64,21 @@ export default function Footer() {
 
           {/* Product Categories */}
           <div className="space-y-4">
-            <h4 className="font-mono font-bold text-xs uppercase tracking-widest text-saffron mb-6">Collections</h4>
+            <h4 className="font-mono font-bold text-xs uppercase tracking-widest text-saffron mb-6">Buddhist Ritual Items</h4>
             <ul className="space-y-2">
               <li>
-                <Link to="/shop?category=Buddha Statues" className="text-stone hover:text-saffron transition-colors text-sm font-display hover:translate-x-1 inline-block">
-                  → Buddha Statues
+                <Link to="/shop?category=Singing Bowls" className="text-stone hover:text-saffron transition-colors text-sm font-display hover:translate-x-1 inline-block">
+                  → Tibetan Singing Bowls
                 </Link>
               </li>
               <li>
-                <Link to="/shop?category=Singing Bowls" className="text-stone hover:text-saffron transition-colors text-sm font-display hover:translate-x-1 inline-block">
-                  → Singing Bowls
+                <Link to="/shop?category=Prayer Wheels" className="text-stone hover:text-saffron transition-colors text-sm font-display hover:translate-x-1 inline-block">
+                  → Buddhist Prayer Wheels
+                </Link>
+              </li>
+              <li>
+                <Link to="/shop?category=Buddha Statues" className="text-stone hover:text-saffron transition-colors text-sm font-display hover:translate-x-1 inline-block">
+                  → Buddha Statues & Figures
                 </Link>
               </li>
               <li>
@@ -81,13 +87,13 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/shop?category=Prayer Flags" className="text-stone hover:text-saffron transition-colors text-sm font-display hover:translate-x-1 inline-block">
-                  → Prayer Flags
+                <Link to="/shop?category=Mala Beads" className="text-stone hover:text-saffron transition-colors text-sm font-display hover:translate-x-1 inline-block">
+                  → Mala Prayer Beads
                 </Link>
               </li>
               <li>
                 <Link to="/shop" className="text-stone hover:text-saffron transition-colors text-sm font-display hover:translate-x-1 inline-block">
-                  → View All
+                  → All Handicrafts
                 </Link>
               </li>
             </ul>
@@ -114,6 +120,22 @@ export default function Footer() {
                 </a>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* SEO Keywords Section */}
+        <div className="border-t-3 border-rice/20 pt-8 pb-6">
+          <div className="text-center">
+            <p className="text-stone/60 text-xs font-display leading-relaxed max-w-4xl mx-auto">
+              <strong className="text-saffron">Keywords:</strong> Himalayan Handicrafts | Tsum Valley Crafts | Buddhist Ritual Items | 
+              Tibetan Singing Bowls | Prayer Wheels | Thangka Paintings | Buddha Statues | 
+              Mala Beads | Meditation Accessories | Nepali Handicrafts | Tibetan Art | 
+              Sacred Buddhist Items | Handcrafted Nepal | Spiritual Gifts | 
+              Authentic Tibetan Crafts | Buddhist Home Decor | Meditation Bowls | 
+              Prayer Beads | Incense Burners | Ritual Tools | Chakra Bowls | 
+              Dharma Items | Zen Meditation | Yoga Accessories | Sound Healing | 
+              Fair Trade Crafts | Artisan Nepal | Traditional Handicrafts
+            </p>
           </div>
         </div>
 

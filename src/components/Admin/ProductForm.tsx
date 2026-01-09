@@ -14,10 +14,7 @@ const ProductForm: React.FC<{ onCreated?: () => void }> = ({ onCreated }) => {
     id: `P-${Date.now().toString(36).toUpperCase()}`,
     name: '',
     description: '',
-    price: '',
-    category: '',
-    artisan: '',
-    stock: '0'
+    category: ''
   });
   const [images, setImages] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
@@ -25,7 +22,7 @@ const ProductForm: React.FC<{ onCreated?: () => void }> = ({ onCreated }) => {
   const [success, setSuccess] = useState(false);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target as any;
     setForm(prev => ({ ...prev, [name]: value }));
   };
@@ -61,24 +58,8 @@ const ProductForm: React.FC<{ onCreated?: () => void }> = ({ onCreated }) => {
       errors.description = 'Description must be at least 10 characters';
     }
 
-    if (!form.price) {
-      errors.price = 'Price is required';
-    } else if (parseFloat(form.price) <= 0) {
-      errors.price = 'Price must be greater than 0';
-    }
-
     if (!form.category.trim()) {
       errors.category = 'Category is required';
-    }
-
-    if (!form.artisan.trim()) {
-      errors.artisan = 'Artisan name is required';
-    }
-
-    if (!form.stock) {
-      errors.stock = 'Stock quantity is required';
-    } else if (parseInt(form.stock, 10) < 0) {
-      errors.stock = 'Stock cannot be negative';
     }
 
     if (images.length < 1) {
@@ -101,12 +82,8 @@ const ProductForm: React.FC<{ onCreated?: () => void }> = ({ onCreated }) => {
         id: form.id,
         name: form.name.trim(),
         description: form.description.trim(),
-        price: parseFloat(form.price),
-        originalPrice: parseFloat(form.price),
         images: imagesBase64,
-        category: form.category.trim(),
-        artisan: form.artisan.trim(),
-        stock: parseInt(form.stock, 10)
+        category: form.category.trim()
       };
 
       const token = authService.getToken();
@@ -125,7 +102,7 @@ const ProductForm: React.FC<{ onCreated?: () => void }> = ({ onCreated }) => {
         setError(data.message || 'Error creating product');
       } else {
         setSuccess(true);
-        setForm({ id: `P-${Date.now().toString(36).toUpperCase()}`, name: '', description: '', price: '', category: '', artisan: '', stock: '0' });
+        setForm({ id: `P-${Date.now().toString(36).toUpperCase()}`, name: '', description: '', category: '' });
         setImages([]);
         
         // Scroll to top to see success message
@@ -197,7 +174,7 @@ const ProductForm: React.FC<{ onCreated?: () => void }> = ({ onCreated }) => {
                 name="description"
                 value={form.description}
                 onChange={handleChange}
-                rows={4}
+                rows={8}
                 className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors resize-none ${
                   validationErrors.description 
                     ? 'border-red-300 focus:border-red-500 bg-red-50' 
@@ -210,87 +187,32 @@ const ProductForm: React.FC<{ onCreated?: () => void }> = ({ onCreated }) => {
               )}
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Price (₨) <span className="text-red-500">*</span>
-                </label>
-                <input
-                  name="price"
-                  type="number"
-                  step="0.01"
-                  value={form.price}
-                  onChange={handleChange}
-                  required
-                  className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors ${
-                    validationErrors.price 
-                      ? 'border-red-300 focus:border-red-500 bg-red-50' 
-                      : 'border-gray-200 focus:border-amber-500'
-                  }`}
-                  placeholder="0"
-                />
-                {validationErrors.price && (
-                  <p className="mt-1 text-xs text-red-600 font-medium">⚠️ {validationErrors.price}</p>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Stock <span className="text-red-500">*</span>
-                </label>
-                <input
-                  name="stock"
-                  type="number"
-                  value={form.stock}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors ${
-                    validationErrors.stock 
-                      ? 'border-red-300 focus:border-red-500 bg-red-50' 
-                      : 'border-gray-200 focus:border-amber-500'
-                  }`}
-                  placeholder="0"
-                />
-                {validationErrors.stock && (
-                  <p className="mt-1 text-xs text-red-600 font-medium">⚠️ {validationErrors.stock}</p>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Category <span className="text-red-500">*</span>
-                </label>
-                <input
-                  name="category"
-                  value={form.category}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors ${
-                    validationErrors.category 
-                      ? 'border-red-300 focus:border-red-500 bg-red-50' 
-                      : 'border-gray-200 focus:border-amber-500'
-                  }`}
-                  placeholder="Statues"
-                />
-                {validationErrors.category && (
-                  <p className="mt-1 text-xs text-red-600 font-medium">⚠️ {validationErrors.category}</p>
-                )}
-              </div>
-            </div>
-
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Artisan <span className="text-red-500">*</span>
+                Category <span className="text-red-500">*</span>
               </label>
-              <input
-                name="artisan"
-                value={form.artisan}
+              <select
+                name="category"
+                value={form.category}
                 onChange={handleChange}
-                className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors ${
-                  validationErrors.artisan 
+                required
+                className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none transition-colors bg-white ${
+                  validationErrors.category 
                     ? 'border-red-300 focus:border-red-500 bg-red-50' 
                     : 'border-gray-200 focus:border-amber-500'
                 }`}
-                placeholder="Artisan name or workshop"
-              />
-              {validationErrors.artisan && (
-                <p className="mt-1 text-sm text-red-600 font-medium">⚠️ {validationErrors.artisan}</p>
+              >
+                <option value="">Select a category</option>
+                <option value="bell">Bell</option>
+                <option value="bowls and karuwa">Bowls and Karuwa</option>
+                <option value="locket">Locket</option>
+                <option value="mala">Mala</option>
+                <option value="singing-bowl">Singing Bowl</option>
+                <option value="statues">Statues</option>
+                <option value="stone sculpture">Stone Sculpture</option>
+              </select>
+              {validationErrors.category && (
+                <p className="mt-1 text-sm text-red-600 font-medium">⚠️ {validationErrors.category}</p>
               )}
             </div>
           </div>

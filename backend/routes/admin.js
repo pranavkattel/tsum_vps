@@ -157,7 +157,7 @@ router.get('/orders', authenticateToken, requireAdmin, async (req, res) => {
 // Admin: list products (including inactive)
 router.get('/products', authenticateToken, requireAdmin, async (req, res) => {
   try {
-    const products = await Product.find({}).sort({ createdAt: -1 });
+    const products = await Product.find({ isActive: { $ne: false } }).sort({ createdAt: -1 });
     res.json({ success: true, data: products });
   } catch (error) {
     console.error('Admin products error:', error);
