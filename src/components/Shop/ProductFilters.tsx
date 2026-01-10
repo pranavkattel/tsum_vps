@@ -85,51 +85,6 @@ export default function ProductFilters({ onFilterChange, categories = [], filter
         </div>
       )}
       
-      {/* Price Range Filter */}
-      <div className="mb-6">
-        <h4 className="font-medium mb-3">Price Range</h4>
-        <div className="space-y-3">
-          <div>
-            <label className="block text-sm text-gray-600 mb-1">Min Price: ₨{minPrice.toLocaleString()}</label>
-            <input
-              type="range"
-              min="0"
-              max="50000"
-              step="1000"
-              value={minPrice}
-              onChange={(e) => {
-                const value = parseInt(e.target.value);
-                if (value <= maxPrice) {
-                  setMinPrice(value);
-                }
-              }}
-              className="w-full accent-amber-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm text-gray-600 mb-1">Max Price: ₨{maxPrice.toLocaleString()}</label>
-            <input
-              type="range"
-              min="0"
-              max="50000"
-              step="1000"
-              value={maxPrice}
-              onChange={(e) => {
-                const value = parseInt(e.target.value);
-                if (value >= minPrice) {
-                  setMaxPrice(value);
-                }
-              }}
-              className="w-full accent-amber-500"
-            />
-          </div>
-          <div className="flex justify-between text-sm text-gray-600 pt-2">
-            <span>₨{minPrice.toLocaleString()}</span>
-            <span>₨{maxPrice.toLocaleString()}</span>
-          </div>
-        </div>
-      </div>
-
       {/* Sort By */}
       <div className="mb-6">
         <h4 className="font-medium mb-3">Sort By</h4>
@@ -139,8 +94,6 @@ export default function ProductFilters({ onFilterChange, categories = [], filter
           className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
         >
           <option value="name">Name (A-Z)</option>
-          <option value="price-low">Price (Low to High)</option>
-          <option value="price-high">Price (High to Low)</option>
           <option value="rating">Rating (High to Low)</option>
         </select>
       </div>

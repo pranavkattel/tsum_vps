@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-const AUDIO_PATH = '/src/audio/flute.m4a';
+const AUDIO_PATH = '/audio/flute.m4a';
 
 export default function BackgroundAudio() {
   const audioRef = useRef<HTMLAudioElement | null>(null);

@@ -66,6 +66,24 @@ const productSchema = new mongoose.Schema({
     min: [0, 'Reviews count cannot be negative'],
     default: 0
   },
+  userReviews: [{
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
+    rating: {
+      type: Number,
+      required: true,
+      min: 1,
+      max: 5
+    },
+    comment: String,
+    createdAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
   tags: [{
     type: String,
     trim: true

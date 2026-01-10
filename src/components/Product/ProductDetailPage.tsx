@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, Heart, Star, Truck, Shield, RotateCcw, ChevronLeft, ChevronRight, Check, Minus, Plus } from 'lucide-react';
+import { ShoppingCart, Star, Truck, Shield, RotateCcw, ChevronLeft, ChevronRight, Check, Minus, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +9,7 @@ import { Product } from '@/types';
 import { useApp } from '@/context/AppContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { sendProductInquiryEmail } from '@/services/emailService';
+import ProductRating from './ProductRating';
 
 interface Review {
   id: string;
@@ -26,12 +27,11 @@ interface ProductDetailPageProps {
 const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product: propProduct = null, allProducts = null }) => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [isFavorite, setIsFavorite] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [isAddedToCart, setIsAddedToCart] = useState(false);
   const [isSendingEmail, setIsSendingEmail] = useState(false);
 
-  const { state: appState, dispatch, addToWishlist, removeFromWishlist } = useApp();
+  const { state: appState, dispatch } = useApp();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -69,13 +69,6 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product: propProd
   };
 
   const product: Product = propProduct ?? exampleProduct;
-
-  // sync initial wishlist state from context
-  useEffect(() => {
-    if (product && appState?.wishlist) {
-      setIsFavorite(appState.wishlist.includes(String(product.id)));
-    }
-  }, [product, appState?.wishlist]);
 
   // Normalize fields to support both legacy product shape and current `src/types` shape
   const images: string[] = ((product as any).images ?? []) as string[];
@@ -197,23 +190,6 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product: propProd
     // add to cart then go to checkout
     dispatch({ type: 'ADD_TO_CART', payload: { product: product as Product, quantity } });
     navigate('/checkout');
-  };
-
-  const toggleWishlist = () => {
-    if (!product) return;
-    if (!appState.isAuthenticated) {
-      navigate('/auth/login', { state: { from: location } });
-      dispatch({ type: 'SET_ERROR', payload: 'Please sign in to add items to your wishlist.' });
-      return;
-    }
-    const id = String(product.id);
-    if (appState.wishlist.includes(id)) {
-      removeFromWishlist(id);
-      setIsFavorite(false);
-    } else {
-      addToWishlist(id);
-      setIsFavorite(true);
-    }
   };
 
   return (
@@ -406,14 +382,6 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product: propProd
                   </svg>
                   WhatsApp Inquiry
                 </Button>
-                <Button
-                  variant={isFavorite ? 'default' : 'outline'}
-                  size="lg"
-                  className="shadow-brutal"
-                  onClick={toggleWishlist}
-                >
-                  <Heart className={`h-5 w-5 ${isFavorite ? 'fill-terracotta text-terracotta' : ''}`} />
-                </Button>
               </div>
 
               <Button 
@@ -526,59 +494,15 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product: propProd
               </div>
             </TabsContent>
             <TabsContent value="reviews" className="mt-6">
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-mono font-bold text-ink">Customer Reviews</h3>
-                    <div className="flex items-center mt-2">
-                      <div className="flex items-center mr-4">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`h-5 w-5 ${
-                              i < Math.floor(product.rating)
-                                ? 'fill-saffron text-saffron'
-                                : 'text-stone'
-                            }`}
-                          />
-                        ))}
-                      </div>
-                      <span className="text-sm font-mono text-charcoal">
-                        {product.rating} out of 5 based on {product.reviews} reviews
-                      </span>
-                    </div>
-                  </div>
-                  <Button className="shadow-brutal font-mono uppercase tracking-widest">Write a Review</Button>
-                </div>
-                <Separator />
-                <div className="space-y-6">
-                  {reviews.map((review) => (
-                    <Card key={review.id} className="border-3 border-ink shadow-brutal-sm">
-                      <CardContent className="p-6">
-                        <div className="flex items-start justify-between mb-2">
-                          <div>
-                            <p className="font-mono font-bold text-ink">{review.author}</p>
-                            <p className="text-xs font-mono text-charcoal">{review.date}</p>
-                          </div>
-                          <div className="flex items-center">
-                            {[...Array(5)].map((_, i) => (
-                              <Star
-                                key={i}
-                                className={`h-4 w-4 ${
-                                  i < review.rating
-                                    ? 'fill-saffron text-saffron'
-                                    : 'text-stone'
-                                }`}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                        <p className="text-charcoal font-display italic">{review.comment}</p>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </div>
+              <ProductRating 
+                productId={String(product.id)}
+                currentRating={product.rating}
+                reviewCount={product.reviews}
+                onRatingSubmitted={() => {
+                  // Optionally refresh product data
+                  window.location.reload();
+                }}
+              />
             </TabsContent>
             <TabsContent value="shipping" className="mt-6">
               <div className="prose prose-sm max-w-none">

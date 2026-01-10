@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, Heart, User, Menu, X, LogOut } from 'lucide-react';
+import { Search, User, Menu, X, LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import authService from '../../services/authService';
@@ -19,8 +19,6 @@ export default function Header({ onPageChange, currentPage }: HeaderProps) {
   useEffect(() => {
     setSearchQuery(state.searchQuery || '');
   }, [state.searchQuery]);
-
-  const wishlistCount = state.wishlist.length;
 
   const handleLogout = () => {
     authService.logout();
@@ -98,19 +96,6 @@ export default function Header({ onPageChange, currentPage }: HeaderProps) {
             </div>
 
             {/* Action Icons */}
-            <button
-              onClick={() => onPageChange('wishlist')}
-              className="p-3 text-ink hover:bg-saffron transition-colors relative border-3 border-ink bg-white hover:shadow-brutal-sm"
-              aria-label="Favorites"
-            >
-              <Heart className={`h-5 w-5 ${wishlistCount > 0 ? 'fill-terracotta text-terracotta' : ''}`} />
-              {wishlistCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-terracotta text-rice text-xs h-6 w-6 flex items-center justify-center font-mono font-bold border-2 border-ink">
-                  {wishlistCount}
-                </span>
-              )}
-            </button>
-
             {/* Authentication */}
             {state.isAuthenticated ? (
               <div className="relative">
@@ -231,20 +216,6 @@ export default function Header({ onPageChange, currentPage }: HeaderProps) {
 
               {/* Mobile Action Icons */}
               <div className="flex gap-3 pt-4 border-t-3 border-ink mt-4">
-                <button
-                  onClick={() => {
-                    onPageChange('wishlist');
-                    setIsMenuOpen(false);
-                  }}
-                  className="flex-1 p-4 text-ink bg-white hover:bg-saffron transition-colors relative border-3 border-ink"
-                >
-                  <Heart className={`h-6 w-6 mx-auto ${wishlistCount > 0 ? 'fill-terracotta text-terracotta' : ''}`} />
-                  {wishlistCount > 0 && (
-                    <span className="absolute top-2 right-2 bg-terracotta text-rice text-xs h-6 w-6 flex items-center justify-center font-mono font-bold border-2 border-ink">
-                      {wishlistCount}
-                    </span>
-                  )}
-                </button>
                 <button
                   onClick={() => {
                     onPageChange('login');

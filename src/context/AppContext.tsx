@@ -1,11 +1,9 @@
 import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
 import { Product, CartItem, User, Order } from '../types';
-import wishlistService from '../services/wishlistService';
 
 interface AppState {
   cart: CartItem[];
   user: User | null;
-  wishlist: string[];
   orders: Order[];
   isAuthenticated: boolean;
   searchQuery: string;
@@ -20,9 +18,6 @@ type AppAction =
   | { type: 'UPDATE_CART_QUANTITY'; payload: { productId: string; quantity: number } }
   | { type: 'CLEAR_CART' }
   | { type: 'SET_CART'; payload: CartItem[] }
-  | { type: 'ADD_TO_WISHLIST'; payload: string }
-  | { type: 'REMOVE_FROM_WISHLIST'; payload: string }
-  | { type: 'SET_WISHLIST'; payload: string[] }
   | { type: 'LOGIN'; payload: { user: User; token: string } }
   | { type: 'SET_USER'; payload: User | null }
   | { type: 'SET_AUTHENTICATED'; payload: boolean }
@@ -36,7 +31,6 @@ type AppAction =
 const initialState: AppState = {
   cart: [],
   user: null,
-  wishlist: [],
   orders: [],
   isAuthenticated: false,
   searchQuery: '',
@@ -97,27 +91,6 @@ function appReducer(state: AppState, action: AppAction): AppState {
         cart: action.payload,
       };
 
-    case 'ADD_TO_WISHLIST':
-      if (!state.wishlist.includes(action.payload)) {
-        return {
-          ...state,
-          wishlist: [...state.wishlist, action.payload],
-        };
-      }
-      return state;
-
-    case 'REMOVE_FROM_WISHLIST':
-      return {
-        ...state,
-        wishlist: state.wishlist.filter(id => id !== action.payload),
-      };
-
-    case 'SET_WISHLIST':
-      return {
-        ...state,
-        wishlist: action.payload,
-      };
-
     case 'LOGIN':
       return {
         ...state,
@@ -148,7 +121,6 @@ function appReducer(state: AppState, action: AppAction): AppState {
         token: null,
         isAuthenticated: false,
         cart: [],
-        wishlist: [],
         error: null,
       };
 
@@ -203,15 +175,6 @@ export function AppProvider({ children }: AppProviderProps) {
       try {
         const user = JSON.parse(userData);
         dispatch({ type: 'LOGIN', payload: { user, token } });
-        
-        // Fetch wishlist from backend
-        wishlistService.getWishlist(token)
-          .then(wishlist => {
-            dispatch({ type: 'SET_WISHLIST', payload: wishlist });
-          })
-          .catch(err => {
-            console.error('Error loading wishlist:', err);
-          });
       } catch (error) {
         console.error('Error parsing stored user data:', error);
         localStorage.removeItem('authToken');
@@ -292,45 +255,7 @@ export function useApp() {
   if (!context) {
     throw new Error('useApp must be used within an AppProvider');
   }
-
-  // Helper function to add to wishlist with backend sync
-  const addToWishlist = async (productId: string) => {
-    context.dispatch({ type: 'ADD_TO_WISHLIST', payload: productId });
-    
-    if (context.state.token) {
-      try {
-        await wishlistService.addToWishlist(productId, context.state.token);
-      } catch (error) {
-        console.error('Failed to sync wishlist to backend:', error);
-        // Optionally revert the optimistic update
-        context.dispatch({ type: 'REMOVE_FROM_WISHLIST', payload: productId });
-      }
-    }
-  };
-
-  // Helper function to remove from wishlist with backend sync
-  const removeFromWishlist = async (productId: string) => {
-    context.dispatch({ type: 'REMOVE_FROM_WISHLIST', payload: productId });
-    
-    if (context.state.token) {
-      try {
-        await wishlistService.removeFromWishlist(productId, context.state.token);
-      } catch (error) {
-        console.error('Failed to sync wishlist removal to backend:', error);
-        // Optionally revert the optimistic update
-        context.dispatch({ type: 'ADD_TO_WISHLIST', payload: productId });
-      }
-    }
-  };
-
-  // Helper function to track WhatsApp inquiry
-  const trackWhatsAppInquiry = async () => {
-    if (context.state.token) {
-      await wishlistService.trackWhatsAppInquiry(context.state.token);
-    }
-  };
-
-  return { ...context, addToWishlist, removeFromWishlist, trackWhatsAppInquiry };
+  return context;
 }
 
 export const useAppContext = useApp;

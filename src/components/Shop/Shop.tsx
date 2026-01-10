@@ -37,8 +37,8 @@ export default function Shop({ onProductClick }: ShopProps) {
       setLoading(true);
       try {
         const fetchedProducts = await ProductService.getProducts({
-          minPrice: filters.priceRange[0],
-          maxPrice: filters.priceRange[1],
+          minPrice: filters.priceRange[0] > 0 ? filters.priceRange[0] : undefined,
+          maxPrice: filters.priceRange[1] < 50000 ? filters.priceRange[1] : undefined,
           sortBy: filters.sortBy,
           category: filters.categories.length > 0 ? filters.categories[0] : undefined,
           search: state.searchQuery || undefined,
