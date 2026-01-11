@@ -24,11 +24,16 @@ export interface Product {
 }
 
 export interface Category {
-  id: string;
+  id?: string;
+  _id?: string;
   name: string;
-  image: string;
-  description: string;
-  productCount: number;
+  image?: string;
+  description?: string;
+  productCount?: number;
+  slug?: string;
+  icon?: string;
+  order?: number;
+  isActive?: boolean;
 }
 
 export interface Artisan {

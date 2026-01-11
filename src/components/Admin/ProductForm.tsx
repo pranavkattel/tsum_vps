@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Upload, Trash2, CheckCircle, Image as ImageIcon } from 'lucide-react';
 import authService from '../../services/authService';
+import { useCategories } from '../../hooks/useProducts';
 
 const toBase64 = (file: File) => new Promise<string>((resolve, reject) => {
   const reader = new FileReader();
@@ -21,6 +22,25 @@ const ProductForm: React.FC<{ onCreated?: () => void }> = ({ onCreated }) => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  const { categories, loading: categoriesLoading } = useCategories();
+
+  const activeCategories = useMemo(
+    () => categories
+      .filter(cat => cat.isActive !== false)
+      .sort((a, b) => {
+        const orderA = a.order ?? 999;
+        const orderB = b.order ?? 999;
+        if (orderA !== orderB) return orderA - orderB;
+        return a.name.localeCompare(b.name);
+      }),
+    [categories]
+  );
+
+  useEffect(() => {
+    if (!form.category && activeCategories.length > 0) {
+      setForm(prev => ({ ...prev, category: activeCategories[0].name }));
+    }
+  }, [activeCategories, form.category]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target as any;
@@ -192,6 +212,7 @@ const ProductForm: React.FC<{ onCreated?: () => void }> = ({ onCreated }) => {
                 Category <span className="text-red-500">*</span>
               </label>
               <select
+                id="category"
                 name="category"
                 value={form.category}
                 onChange={handleChange}
@@ -203,13 +224,15 @@ const ProductForm: React.FC<{ onCreated?: () => void }> = ({ onCreated }) => {
                 }`}
               >
                 <option value="">Select a category</option>
-                <option value="bell">Bell</option>
-                <option value="bowls and karuwa">Bowls and Karuwa</option>
-                <option value="locket">Locket</option>
-                <option value="mala">Mala</option>
-                <option value="singing-bowl">Singing Bowl</option>
-                <option value="statues">Statues</option>
-                <option value="stone sculpture">Stone Sculpture</option>
+                {categoriesLoading && <option disabled>Loading categories...</option>}
+                {!categoriesLoading && activeCategories.length === 0 && (
+                  <option disabled>No categories found</option>
+                )}
+                {activeCategories.map(cat => (
+                  <option key={cat.id || cat._id || cat.name} value={cat.name}>
+                    {cat.name}
+                  </option>
+                ))}
               </select>
               {validationErrors.category && (
                 <p className="mt-1 text-sm text-red-600 font-medium">⚠️ {validationErrors.category}</p>

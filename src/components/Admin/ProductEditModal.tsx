@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { X, Upload, Trash2, MoveUp, MoveDown, Image as ImageIcon } from 'lucide-react';
 import authService from '../../services/authService';
+import { useCategories } from '../../hooks/useProducts';
 
 type Props = {
   product: any;
@@ -21,6 +22,28 @@ const ProductEditModal: React.FC<Props> = ({ product, onClose, onSaved }) => {
   const [newImageFiles, setNewImageFiles] = useState<File[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { categories, loading: categoriesLoading } = useCategories();
+
+  const activeCategories = useMemo(
+    () => categories
+      .filter(cat => cat.isActive !== false)
+      .sort((a, b) => {
+        const orderA = a.order ?? 999;
+        const orderB = b.order ?? 999;
+        if (orderA !== orderB) return orderA - orderB;
+        return a.name.localeCompare(b.name);
+      }),
+    [categories]
+  );
+
+  const selectableCategories = useMemo(() => {
+    // Ensure the product's current category remains selectable even if inactive/not found
+    const names = new Set(activeCategories.map(c => c.name));
+    if (form.category && !names.has(form.category)) {
+      return [...activeCategories, { name: form.category } as any];
+    }
+    return activeCategories;
+  }, [activeCategories, form.category]);
 
   useEffect(() => {
     setForm({ ...product });
@@ -166,13 +189,15 @@ const ProductEditModal: React.FC<Props> = ({ product, onClose, onSaved }) => {
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-amber-500 focus:outline-none transition-colors bg-white"
                 >
                   <option value="">Select a category</option>
-                  <option value="bell">Bell</option>
-                  <option value="bowls and karuwa">Bowls and Karuwa</option>
-                  <option value="locket">Locket</option>
-                  <option value="mala">Mala</option>
-                  <option value="singing-bowl">Singing Bowl</option>
-                  <option value="statues">Statues</option>
-                  <option value="stone sculpture">Stone Sculpture</option>
+                  {categoriesLoading && <option disabled>Loading categories...</option>}
+                  {!categoriesLoading && selectableCategories.length === 0 && (
+                    <option disabled>No categories found</option>
+                  )}
+                  {selectableCategories.map(cat => (
+                    <option key={(cat as any)._id || (cat as any).id || cat.name} value={cat.name}>
+                      {cat.name}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>

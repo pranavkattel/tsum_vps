@@ -95,13 +95,28 @@ export class ProductService {
   // Get all categories
   static async getCategories(): Promise<Category[]> {
     try {
-      // Simulate async operation
-      await new Promise(resolve => setTimeout(resolve, 200));
-      
-      return mockCategories;
+      const response = await fetch(`${API_URL}/categories?active=true`);
+      if (!response.ok) throw new Error('Failed to fetch categories');
+
+      const json = await response.json();
+      const raw = json.data || json.categories || [];
+
+      return raw.map((cat: any) => ({
+        id: cat._id || cat.id,
+        _id: cat._id,
+        name: cat.name,
+        slug: cat.slug,
+        description: cat.description,
+        icon: cat.icon,
+        order: typeof cat.order === 'number' ? cat.order : undefined,
+        productCount: typeof cat.productCount === 'number' ? cat.productCount : undefined,
+        isActive: cat.isActive,
+        image: cat.image
+      } as Category));
     } catch (error) {
       console.error('Error fetching categories:', error);
-      return [];
+      // Fallback to mocks if API fails so UI can still render
+      return mockCategories;
     }
   }
 
