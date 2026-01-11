@@ -426,22 +426,18 @@ const AdminDashboard: React.FC = () => {
                                 <table className="w-full">
                                   <thead className="bg-gray-50 border-b-2 border-gray-200">
                                     <tr>
-                                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Icon</th>
+                                      
                                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Name</th>
                                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Slug</th>
                                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Description</th>
-                                      <th className="px-6 py-4 text-center text-sm font-semibold text-gray-700">Order</th>
-                                      <th className="px-6 py-4 text-center text-sm font-semibold text-gray-700">Products</th>
-                                      <th className="px-6 py-4 text-center text-sm font-semibold text-gray-700">Status</th>
+                                      
                                       <th className="px-6 py-4 text-right text-sm font-semibold text-gray-700">Actions</th>
                                     </tr>
                                   </thead>
                                   <tbody className="divide-y divide-gray-200">
                                     {categories.map((cat) => (
                                       <tr key={cat._id} className="hover:bg-gray-50 transition-colors">
-                                        <td className="px-6 py-4">
-                                          <div className="text-2xl">{cat.icon || '📁'}</div>
-                                        </td>
+                                        
                                         <td className="px-6 py-4">
                                           <div className="font-semibold text-gray-900">{cat.name}</div>
                                         </td>
@@ -453,21 +449,7 @@ const AdminDashboard: React.FC = () => {
                                             {cat.description || '-'}
                                           </div>
                                         </td>
-                                        <td className="px-6 py-4 text-center">
-                                          <span className="text-sm font-medium text-gray-700">{cat.order}</span>
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                            {cat.productCount || 0}
-                                          </span>
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-                                            cat.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                                          }`}>
-                                            {cat.isActive ? 'Active' : 'Inactive'}
-                                          </span>
-                                        </td>
+                                        
                                         <td className="px-6 py-4 text-right">
                                           <div className="flex items-center justify-end gap-2">
                                             <button
@@ -643,15 +625,7 @@ const AdminDashboard: React.FC = () => {
                   </div>
                   <div className="p-4">
                     <h3 className="font-semibold text-gray-900 mb-1 truncate">{p.name}</h3>
-                    <div className="text-xs text-gray-500 mb-2 truncate">{p.category}</div>
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="text-lg font-bold text-amber-600">₨ {p.price}</div>
-                      <div className="text-sm text-gray-600">
-                        Stock: <span className={`font-bold ${p.stock > 10 ? 'text-green-600' : p.stock > 0 ? 'text-yellow-600' : 'text-red-600'}`}>
-                          {p.stock}
-                        </span>
-                      </div>
-                    </div>
+                    <div className="text-xs text-gray-500 mb-3 truncate">{p.category}</div>
                     {p.images && p.images.length > 1 && (
                       <div className="text-xs text-gray-500 mb-3 flex items-center gap-1">
                         <Package className="w-3 h-3" />
@@ -916,22 +890,18 @@ const AdminDashboard: React.FC = () => {
               <table className="w-full">
                 <thead className="bg-gray-50 border-b-2 border-gray-200">
                   <tr>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Icon</th>
+                    
                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Name</th>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Slug</th>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Description</th>
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-gray-700">Order</th>
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-gray-700">Products</th>
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-gray-700">Status</th>
+                    
                     <th className="px-6 py-4 text-right text-sm font-semibold text-gray-700">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {categories.map((cat) => (
                     <tr key={cat._id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="text-2xl">{cat.icon || '📁'}</div>
-                      </td>
+                      
                       <td className="px-6 py-4">
                         <div className="font-semibold text-gray-900">{cat.name}</div>
                       </td>
@@ -943,21 +913,7 @@ const AdminDashboard: React.FC = () => {
                           {cat.description || '-'}
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-center">
-                        <span className="text-sm font-medium text-gray-700">{cat.order}</span>
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                          {cat.productCount || 0}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
-                          cat.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                        }`}>
-                          {cat.isActive ? 'Active' : 'Inactive'}
-                        </span>
-                      </td>
+                      
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <button

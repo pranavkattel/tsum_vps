@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ShoppingCart, Star, Truck, Shield, RotateCcw, ChevronLeft, ChevronRight, Check, Minus, Plus } from 'lucide-react';
+import React, { useState } from 'react';
+import { Star, Truck, Shield, ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -7,17 +7,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { Product } from '@/types';
 import { useApp } from '@/context/AppContext';
-import { useNavigate, useLocation } from 'react-router-dom';
+// Navigation hooks not used after UI simplification
 import { sendProductInquiryEmail } from '@/services/emailService';
 import ProductRating from './ProductRating';
 
-interface Review {
-  id: string;
-  author: string;
-  rating: number;
-  date: string;
-  comment: string;
-}
 
 interface ProductDetailPageProps {
   product?: Product | null;
@@ -26,14 +19,10 @@ interface ProductDetailPageProps {
 
 const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product: propProduct = null, allProducts = null }) => {
   const [selectedImage, setSelectedImage] = useState(0);
-  const [quantity, setQuantity] = useState(1);
-  const [isAddingToCart, setIsAddingToCart] = useState(false);
-  const [isAddedToCart, setIsAddedToCart] = useState(false);
+  // Quantity UI removed
   const [isSendingEmail, setIsSendingEmail] = useState(false);
 
-  const { state: appState, dispatch } = useApp();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const { state: appState } = useApp();
 
 
   // Use product from props when provided, otherwise fallback to example data below
@@ -54,62 +43,23 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product: propProd
       'https://images.unsplash.com/photo-1599619351208-3e6906b5e2c7?w=800&h=800&fit=crop',
     ],
     category: 'Religious Statues',
-    material: 'Bronze with Gold Plating',
-    dimensions: '12" H x 8" W x 6" D',
-    weight: '3.5 lbs',
-    inStock: true,
-    features: [
-      'Handcrafted by master artisans',
-      'Traditional Nepali craftsmanship',
-      'Premium bronze with gold plating',
-      'Unique piece with slight variations',
-      'Comes with certificate of authenticity',
-      'Perfect for meditation spaces',
-    ],
+    artisan: 'Master Artisan',
+    materials: ['Bronze', 'Gold Plating'],
+    dimensions: { length: 12, width: 8, height: 6 },
+    weight: 3.5,
+    stock: 5,
+    featured: false,
+    tags: ['Handcrafted by master artisans','Traditional Nepali craftsmanship','Premium bronze with gold plating','Unique piece with slight variations','Certificate of authenticity','Perfect for meditation spaces'],
   };
 
   const product: Product = propProduct ?? exampleProduct;
 
   // Normalize fields to support both legacy product shape and current `src/types` shape
   const images: string[] = ((product as any).images ?? []) as string[];
-  const materialText = (product as any).material
-    ?? ((product as any).materials ? (product as any).materials.join(', ') : undefined)
-    ?? '—';
-  const dimensionsText = typeof (product as any).dimensions === 'string'
-    ? (product as any).dimensions
-    : (product as any).dimensions
-      ? `${(product as any).dimensions.length} x ${(product as any).dimensions.width} x ${(product as any).dimensions.height}`
-      : '—';
-  const weightText = typeof (product as any).weight === 'number'
-    ? `${(product as any).weight} lbs`
-    : (product as any).weight ?? '—';
   const inStock = (product as any).inStock ?? (typeof (product as any).stock === 'number' ? (product as any).stock > 0 : true);
   const featuresList: string[] = (product as any).features ?? (product as any).tags ?? [];
-  const originalPrice = (product as any).originalPrice ?? 0;
 
-  const reviews: Review[] = [
-    {
-      id: '1',
-      author: 'Sarah Johnson',
-      rating: 5,
-      date: 'March 15, 2024',
-      comment: 'Absolutely stunning piece! The craftsmanship is incredible and it arrived perfectly packaged. A beautiful addition to my meditation room.',
-    },
-    {
-      id: '2',
-      author: 'Michael Chen',
-      rating: 5,
-      date: 'March 10, 2024',
-      comment: 'The quality exceeded my expectations. You can tell this was made with care and expertise. Highly recommend!',
-    },
-    {
-      id: '3',
-      author: 'Emma Williams',
-      rating: 4,
-      date: 'March 5, 2024',
-      comment: 'Beautiful statue with excellent detail. Shipping took a bit longer than expected but worth the wait.',
-    },
-  ];
+  // Reviews sample removed; using product.reviews for counts
 
   // If `allProducts` provided, compute related products by same category (exclude current)
   const relatedProducts: { id: string; name: string; price: number; image: string; rating: number }[] =
@@ -163,34 +113,7 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product: propProd
     setSelectedImage((prev) => (prev === (images.length ? images.length - 1 : 0) ? 0 : prev + 1));
   };
 
-  const handleQuantityChange = (delta: number) => {
-    setQuantity((prev) => Math.max(1, Math.min(10, prev + delta)));
-  };
-
-  const handleAddToCart = () => {
-    if (!product) return;
-    if (!appState.isAuthenticated) {
-      // redirect to login and preserve location
-      navigate('/auth/login', { state: { from: location } });
-      dispatch({ type: 'SET_ERROR', payload: 'Please sign in to add items to your cart.' });
-      return;
-    }
-    if (isAddedToCart) return;
-    setIsAddingToCart(true);
-    setTimeout(() => {
-      dispatch({ type: 'ADD_TO_CART', payload: { product: product as Product, quantity } });
-      setIsAddingToCart(false);
-      setIsAddedToCart(true);
-      setTimeout(() => setIsAddedToCart(false), 2000);
-    }, 600);
-  };
-
-  const handleBuyNow = () => {
-    if (!product) return;
-    // add to cart then go to checkout
-    dispatch({ type: 'ADD_TO_CART', payload: { product: product as Product, quantity } });
-    navigate('/checkout');
-  };
+  // Quantity and cart actions removed from UI; inquiries only
 
   return (
     <div className="min-h-screen bg-rice font-display">
@@ -282,19 +205,7 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product: propProd
               <p className="text-charcoal leading-relaxed font-display italic">{product.description}</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-xs font-mono text-charcoal uppercase">Material</p>
-                <p className="font-medium text-ink">{materialText}</p>
-              </div>
-              <div>
-                <p className="text-xs font-mono text-charcoal uppercase">Dimensions</p>
-                <p className="font-medium text-ink">{dimensionsText}</p>
-              </div>
-              <div>
-                <p className="text-xs font-mono text-charcoal uppercase">Weight</p>
-                <p className="font-medium text-ink">{weightText}</p>
-              </div>
+            <div className="grid grid-cols-1 gap-4">
               <div>
                 <p className="text-xs font-mono text-charcoal uppercase">Availability</p>
                 <p className="font-medium text-green-700 flex items-center">
@@ -320,29 +231,6 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product: propProd
             <Separator />
 
             <div className="space-y-4">
-              <div className="flex items-center space-x-4">
-                <span className="text-sm font-mono text-ink uppercase">Quantity:</span>
-                <div className="flex items-center border-3 border-ink rounded-lg bg-stone">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleQuantityChange(-1)}
-                    disabled={quantity <= 1}
-                  >
-                    <Minus className="h-4 w-4" />
-                  </Button>
-                  <span className="px-4 py-2 text-ink font-mono font-bold text-lg">{quantity}</span>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleQuantityChange(1)}
-                    disabled={quantity >= 10}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-
               <div className="flex space-x-4">
                 <Button 
                   className="flex-1 shadow-brutal bg-green-600 hover:bg-green-700" 
@@ -372,7 +260,7 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product: propProd
                     
                     const productUrl = `${window.location.origin}/product/${product.id}`;
                     const message = `Hi, I'm interested in this product:\n\n*${product.name}*\nCategory: ${product.category}\n\nView Product: ${productUrl}\n\nCould you please provide pricing and availability?\n\nThank you!`;
-                    const whatsappUrl = `https://wa.me/9779820229166?text=${encodeURIComponent(message)}`;
+                    const whatsappUrl = `https://wa.me/9779709127173?text=${encodeURIComponent(message)}`;
                     window.open(whatsappUrl, '_blank');
                   }}
                   disabled={!inStock}
@@ -430,7 +318,7 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product: propProd
               </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
               <Card className="border-3 border-ink shadow-brutal-sm">
                 <CardContent className="flex flex-col items-center justify-center p-4 text-center">
                   <Truck className="h-6 w-6 text-indigo mb-2" />
@@ -443,13 +331,6 @@ const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ product: propProd
                   <Shield className="h-6 w-6 text-indigo mb-2" />
                   <p className="text-xs font-mono font-bold text-ink">Secure Payment</p>
                   <p className="text-xs text-charcoal">100% protected</p>
-                </CardContent>
-              </Card>
-              <Card className="border-3 border-ink shadow-brutal-sm">
-                <CardContent className="flex flex-col items-center justify-center p-4 text-center">
-                  <RotateCcw className="h-6 w-6 text-indigo mb-2" />
-                  <p className="text-xs font-mono font-bold text-ink">Easy Returns</p>
-                  <p className="text-xs text-charcoal">30-day guarantee</p>
                 </CardContent>
               </Card>
             </div>

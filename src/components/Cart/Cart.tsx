@@ -1,18 +1,12 @@
-import React from 'react';
-import { Trash2, Plus, Minus } from 'lucide-react';
+// React import not needed with modern JSX transform
+import { Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 
 export default function Cart() {
   const { state, dispatch } = useApp();
 
-  const updateQuantity = (productId: string, quantity: number) => {
-    if (quantity <= 0) {
-      dispatch({ type: 'REMOVE_FROM_CART', payload: productId });
-    } else {
-      dispatch({ type: 'UPDATE_CART_QUANTITY', payload: { productId, quantity } });
-    }
-  };
+  // Quantity updates removed from UI
 
   const removeFromCart = (productId: string) => {
     dispatch({ type: 'REMOVE_FROM_CART', payload: productId });
@@ -25,13 +19,12 @@ export default function Cart() {
       const productUrl = `${window.location.origin}/product/${item.product.id}`;
       message += `${index + 1}. *${item.product.name}*\n`;
       message += `Category: ${item.product.category}\n`;
-      message += `Quantity: ${item.quantity}\n`;
       message += `View: ${productUrl}\n\n`;
     });
     
     message += "Could you please provide pricing and availability for these items?\n\nThank you!";
     
-    const whatsappUrl = `https://wa.me/9779820229166?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/9779709127173?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
@@ -110,23 +103,9 @@ export default function Cart() {
                     <div className="flex-1">
                       <h3 className="font-semibold text-gray-800">{item.product.name}</h3>
                       <p className="text-sm text-gray-600">{item.product.category}</p>
-                      <p className="text-sm text-amber-600 font-medium mt-1">Quantity: {item.quantity}</p>
+                      {/* Quantity removed from UI */}
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <button
-                        onClick={() => updateQuantity(item.productId, item.quantity - 1)}
-                        className="p-1 rounded-full bg-gray-200 hover:bg-gray-300"
-                      >
-                        <Minus className="h-4 w-4" />
-                      </button>
-                      <span className="w-8 text-center">{item.quantity}</span>
-                      <button
-                        onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-                        className="p-1 rounded-full bg-gray-200 hover:bg-gray-300"
-                      >
-                        <Plus className="h-4 w-4" />
-                      </button>
-                    </div>
+                    {/* Quantity controls removed */}
                     <button
                       onClick={() => removeFromCart(item.productId)}
                       className="p-2 text-red-500 hover:text-red-700"
@@ -148,16 +127,14 @@ export default function Cart() {
                   <p className="text-sm text-amber-800 font-medium text-center">
                     Selected Items: {validCartItems.length}
                   </p>
-                  <p className="text-xs text-amber-600 text-center mt-2">
-                    Total Quantity: {validCartItems.reduce((total, item) => total + item.quantity, 0)}
-                  </p>
+                  {/* Total Quantity removed */}
                 </div>
                 <div className="text-sm text-gray-600 text-center">
                   <p className="font-medium">Pricing depends on:</p>
                   <ul className="mt-2 space-y-1">
                     <li>• Size specifications</li>
                     <li>• Quality preferences</li>
-                    <li>• Quantity ordered</li>
+                    {/* Quantity bullet removed */}
                   </ul>
                 </div>
               </div>

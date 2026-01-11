@@ -155,7 +155,7 @@ export default function ProductDetail({ product, onBack }: ProductDetailProps) {
                         const selectedSize = sizeOptions[quantity - 1];
                         const productUrl = `${window.location.origin}/product/${product.id}`;
                         const message = `Hi, I'm interested in this product:\n\n*${product.name}*\nSize: ${selectedSize}\nCategory: ${product.category}\n\nView Product: ${productUrl}\n\nCould you please provide pricing and availability?\n\nThank you!`;
-                        const whatsappUrl = `https://wa.me/9779820229166?text=${encodeURIComponent(message)}`;
+                        const whatsappUrl = `https://wa.me/9779709127173?text=${encodeURIComponent(message)}`;
                         window.open(whatsappUrl, '_blank');
                       }}
                       className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"

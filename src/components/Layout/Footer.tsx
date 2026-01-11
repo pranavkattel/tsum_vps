@@ -105,18 +105,18 @@ export default function Footer() {
             <div className="space-y-4">
               <div className="flex items-start space-x-3">
                 <MapPin className="h-5 w-5 text-saffron flex-shrink-0 mt-0.5" />
-                <span className="text-stone text-sm font-display">Tsum Valley, Gorkha<br />Kathmandu, Nepal</span>
+                <span className="text-stone text-sm font-display">Thamel, Kathmandu<br />Nepal</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-saffron flex-shrink-0" />
-                <a href="tel:+977-1-4701234" className="text-stone text-sm font-mono hover:text-saffron transition-colors">
-                  +977-1-4701234
+                <a href="tel:+9779709127173" className="text-stone text-sm font-mono hover:text-saffron transition-colors">
+                  +977-9709127173
                 </a>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-saffron flex-shrink-0" />
-                <a href="mailto:info@tsum.com" className="text-stone text-sm font-mono hover:text-saffron transition-colors">
-                  info@tsum.com
+                <a href="mailto:chhewanglama2025@gmail.com" className="text-stone text-sm font-mono hover:text-saffron transition-colors">
+                  chhewanglama2025@gmail.com
                 </a>
               </div>
             </div>

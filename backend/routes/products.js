@@ -207,7 +207,7 @@ router.post('/', authenticateToken, requireAdmin, async (req, res) => {
     console.log('Images received:', images ? images.length : 0);
     
     // Get backend URL from environment or default
-    const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3001';
+    const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3005';
     
     // Process images: convert base64 to files
     const processedImages = [];
@@ -278,7 +278,7 @@ router.put('/:id', authenticateToken, requireAdmin, async (req, res) => {
     console.log('First image type:', images && images[0] ? (images[0].startsWith('data:image') ? 'base64' : 'URL') : 'none');
     
     // Get backend URL from environment or default
-    const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3001';
+    const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3005';
     
     // Process images: keep existing URLs, convert base64 to files
     const processedImages = [];

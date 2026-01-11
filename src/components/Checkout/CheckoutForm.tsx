@@ -253,7 +253,7 @@ export default function CheckoutForm({ onSuccess, onError }: CheckoutFormProps) 
               <div className="space-y-2 mb-4">
                 {state.cart.map((item) => (
                   <div key={item.productId} className="flex justify-between text-sm">
-                    <span>{item.product.name} × {item.quantity}</span>
+                    <span>{item.product.name}</span>
                     <span>${(item.product.price * item.quantity).toFixed(2)}</span>
                   </div>
                 ))}

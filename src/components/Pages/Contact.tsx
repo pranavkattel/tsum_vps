@@ -87,7 +87,7 @@ export default function Contact() {
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">Address</h3>
                   <p className="text-gray-600">
-                    Thamel, Kathmandu 44600<br />
+                    Thamel, Kathmandu<br />
                     Nepal
                   </p>
                 </div>
@@ -100,7 +100,6 @@ export default function Contact() {
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">Phone</h3>
                   <p className="text-gray-600">
-                    +977-1-4701234<br />
                     +977-9709127173
                   </p>
                 </div>
@@ -113,8 +112,7 @@ export default function Contact() {
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">Email</h3>
                   <p className="text-gray-600">
-                    info@himalicrafts.com<br />
-                    support@himalicrafts.com
+                    chhewanglama2025@gmail.com
                   </p>
                 </div>
               </div>

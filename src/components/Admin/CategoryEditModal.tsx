@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { X, Save, FolderOpen } from 'lucide-react';
 import authService from '../../services/authService';
 
@@ -11,10 +11,7 @@ interface CategoryEditModalProps {
 const CategoryEditModal: React.FC<CategoryEditModalProps> = ({ category, onClose, onSaved }) => {
   const [formData, setFormData] = useState({
     name: category?.name || '',
-    description: category?.description || '',
-    icon: category?.icon || '',
-    order: category?.order || 0,
-    isActive: category?.isActive !== undefined ? category.isActive : true
+    description: category?.description || ''
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -116,48 +113,7 @@ const CategoryEditModal: React.FC<CategoryEditModalProps> = ({ category, onClose
             />
           </div>
 
-          {/* Icon */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Icon (emoji or text)
-            </label>
-            <input
-              type="text"
-              value={formData.icon}
-              onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-              placeholder="e.g., 🗿 or leave empty"
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors"
-            />
-          </div>
-
-          {/* Order */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Display Order
-            </label>
-            <input
-              type="number"
-              value={formData.order}
-              onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
-              placeholder="0"
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none transition-colors"
-            />
-            <p className="text-xs text-gray-500 mt-1">Lower numbers appear first</p>
-          </div>
-
-          {/* Active Status */}
-          <div className="flex items-center gap-3">
-            <input
-              type="checkbox"
-              id="isActive"
-              checked={formData.isActive}
-              onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-              className="w-5 h-5 text-purple-600 border-2 border-gray-300 rounded focus:ring-2 focus:ring-purple-500"
-            />
-            <label htmlFor="isActive" className="text-sm font-semibold text-gray-700 cursor-pointer">
-              Active (visible to users)
-            </label>
-          </div>
+          
 
           {/* Actions */}
           <div className="flex gap-3 pt-4">

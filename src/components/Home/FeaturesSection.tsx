@@ -57,12 +57,7 @@ export default function FeaturesSection() {
       description: "Handpicked pieces meeting our highest craftsmanship standards.",
       color: "indigo"
     },
-    {
-      icon: RefreshCw,
-      title: "Easy Returns",
-      description: "30-day hassle-free returns. Not satisfied? We'll make it right.",
-      color: "saffron"
-    }
+
   ];
 
   return (
