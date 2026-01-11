@@ -77,7 +77,10 @@ router.post('/', authenticateToken, requireAdmin, async (req, res) => {
                 const path = await import('path');
                 const { fileURLToPath } = await import('url');
                 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-                const fullPath = path.resolve(__dirname, '../../public', fileName);
+                
+                // Use UPLOAD_DIR env var if set (production), otherwise use relative path (development)
+                const uploadDir = process.env.UPLOAD_DIR || path.resolve(__dirname, '../../public');
+                const fullPath = path.join(uploadDir, fileName);
 
                 await fs.writeFile(fullPath, Buffer.from(base64Data, 'base64'));
                 console.log('Saved gallery image to:', fullPath);
@@ -126,7 +129,10 @@ router.put('/:id', authenticateToken, requireAdmin, async (req, res) => {
                 const path = await import('path');
                 const { fileURLToPath } = await import('url');
                 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-                const fullPath = path.resolve(__dirname, '../../public', fileName);
+                
+                // Use UPLOAD_DIR env var if set (production), otherwise use relative path (development)
+                const uploadDir = process.env.UPLOAD_DIR || path.resolve(__dirname, '../../public');
+                const fullPath = path.join(uploadDir, fileName);
 
                 await fs.writeFile(fullPath, Buffer.from(base64Data, 'base64'));
                 console.log('Saved gallery image to:', fullPath);
