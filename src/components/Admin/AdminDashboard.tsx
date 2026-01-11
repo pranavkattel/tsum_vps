@@ -205,29 +205,6 @@ const AdminDashboard: React.FC = () => {
     return (p.name && p.name.toLowerCase().includes(s)) || String(p.id).toLowerCase().includes(s) || (p.category && p.category.toLowerCase().includes(s));
   });
 
-  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
-  const API_ORIGIN = API_BASE.replace(/\/api$/, '');
-
-  function getDisplayImage(raw: string | undefined) {
-    if (!raw) return '';
-    const s = String(raw);
-    // data URL (preview of uploads)
-    if (s.startsWith('data:image')) return s;
-    // relative path from backend public
-    if (s.startsWith('/')) return `${API_ORIGIN}${s}`;
-    // absolute URL: normalize localhost port if needed
-    try {
-      const u = new URL(s);
-      const origin = new URL(API_ORIGIN);
-      const isLocalhost = u.hostname === 'localhost' || u.hostname === '127.0.0.1';
-      if (isLocalhost && (u.port !== origin.port)) {
-        // rebase to current backend origin to avoid port mismatches
-        return `${API_ORIGIN}${u.pathname}`;
-      }
-    } catch { /* ignore URL parse errors and fall through */ }
-    return s;
-  }
-
   // Inline component: try product images (from DB) sequentially before falling back
   const ProductImage: React.FC<{ images: any[]; alt?: string; className?: string }> = ({ images, alt, className }) => {
     const [index, setIndex] = useState(0);
