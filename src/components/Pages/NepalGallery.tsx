@@ -18,6 +18,29 @@ export default function NepalGallery() {
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+  const API_ORIGIN = API_BASE.replace(/\/api$/, '');
+
+  const normalizeImageUrl = (raw: string | undefined) => {
+    if (!raw) return '';
+    const s = String(raw);
+    // data URL (preview of uploads)
+    if (s.startsWith('data:image')) return s;
+    // relative path from backend public
+    if (s.startsWith('/')) return `${API_ORIGIN}${s}`;
+    // absolute URL: normalize localhost port if needed
+    try {
+      const u = new URL(s);
+      const origin = new URL(API_ORIGIN);
+      const isLocalhost = u.hostname === 'localhost' || u.hostname === '127.0.0.1';
+      if (isLocalhost && (u.port !== origin.port)) {
+        // rebase to current backend origin to avoid port mismatches
+        return `${API_ORIGIN}${u.pathname}`;
+      }
+    } catch { /* ignore URL parse errors and fall through */ }
+    return s;
+  };
+
   useEffect(() => {
     const fetchGallery = async () => {
       try {
@@ -98,7 +121,7 @@ export default function NepalGallery() {
             >
               <div className="relative h-64 overflow-hidden">
                 <img
-                  src={scenery.image}
+                  src={normalizeImageUrl(scenery.image)}
                   alt={scenery.title}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   onError={(e) => {
@@ -147,7 +170,7 @@ export default function NepalGallery() {
             </button>
             <div className="bg-white border-4 border-ink shadow-brutal-lg overflow-hidden">
               <img
-                src={selectedImage.image}
+                src={normalizeImageUrl(selectedImage.image)}
                 alt={selectedImage.title}
                 className="w-full max-h-[70vh] object-contain"
                 onClick={(e) => e.stopPropagation()}
