@@ -295,7 +295,7 @@ export default function Profile() {
                 <div className="bg-indigo/20 border-3 border-ink p-4">
                   <p className="text-xs font-mono font-bold text-ink mb-1">Favorites</p>
                   <p className="text-lg font-display font-bold text-indigo">
-                    {state.wishlist.length} items
+                    {state.user?.wishlist?.length || 0} items
                   </p>
                 </div>
               </div>

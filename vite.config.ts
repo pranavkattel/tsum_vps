@@ -17,6 +17,10 @@ export default defineConfig({
     // bind to 127.0.0.1 so you can try accessing via 127.0.0.1:5174
     host: '127.0.0.1',
   },
+  preview: {
+    port: 4173,
+    host: '127.0.0.1',
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

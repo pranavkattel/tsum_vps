@@ -130,7 +130,7 @@ router.put('/:id', authenticateToken, requireAdmin, async (req, res) => {
 
                 await fs.writeFile(fullPath, Buffer.from(base64Data, 'base64'));
                 console.log('Saved gallery image to:', fullPath);
-                processedImage = `/${fileName}`;
+                processedImage = `${fileName}`;
             }
         }
 
