@@ -12,6 +12,7 @@ import cartRoutes from './routes/cart.js';
 import emailRoutes from './routes/email.js';
 import wishlistRoutes from './routes/wishlist.js';
 import galleryRoutes from './routes/gallery.js';
+import categoryRoutes from './routes/categories.js';
 
 // ES module dirname fix
 const __filename = fileURLToPath(import.meta.url);
@@ -66,6 +67,7 @@ app.use('/api/cart', cartRoutes);
 app.use('/api/email', emailRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/gallery', galleryRoutes);
+app.use('/api/categories', categoryRoutes);
 
 // Debug: list registered routes for troubleshooting
 const listRoutes = () => {
