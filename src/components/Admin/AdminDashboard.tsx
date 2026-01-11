@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Package, Users, TrendingUp, Search, Edit, Trash2, Plus, ShoppingBag, MessageCircle, Mail, Mountain } from 'lucide-react';
+import { FolderOpen } from 'lucide-react';
 import authService from '../../services/authService';
 import ProductEditModal from './ProductEditModal';
 import GalleryEditModal from './GalleryEditModal';
+import CategoryEditModal from './CategoryEditModal';
 
 type DashboardData = {
   totalInquiries: number;
@@ -24,11 +26,14 @@ const AdminDashboard: React.FC = () => {
   const [showEdit, setShowEdit] = useState<any | null>(null);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
-  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'users' | 'gallery'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'users' | 'gallery' | 'categories'>('overview');
   const [users, setUsers] = useState<any[]>([]);
   const [galleryItems, setGalleryItems] = useState<any[]>([]);
   const [showGalleryEdit, setShowGalleryEdit] = useState<any | null>(null);
   const [showAddGallery, setShowAddGallery] = useState(false);
+    const [categories, setCategories] = useState<any[]>([]);
+    const [showCategoryEdit, setShowCategoryEdit] = useState<any | null>(null);
+    const [showAddCategory, setShowAddCategory] = useState(false);
   const perPage = 12;
   const navigate = useNavigate();
 
@@ -125,6 +130,23 @@ const AdminDashboard: React.FC = () => {
 
   useEffect(() => { fetchUsers(); }, []);
   useEffect(() => { fetchGallery(); }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const token = authService.getToken();
+      const url = `${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/categories`;
+      const res = await fetch(url, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message || 'Error fetching categories');
+      setCategories(json.data || []);
+    } catch (err: any) {
+      console.error('Fetch categories error:', err.message);
+    }
+  };
+
+  useEffect(() => { fetchCategories(); }, []);
 
   const filtered = products.filter(p => {
     if (!search) return true;
@@ -274,6 +296,16 @@ const AdminDashboard: React.FC = () => {
             >
               <Mountain className="w-4 h-4" />
               Gallery
+                        <button
+                          onClick={() => setActiveTab('categories')}
+                          className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${activeTab === 'categories'
+                              ? 'bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-md'
+                              : 'text-gray-600 hover:bg-gray-100'
+                            }`}
+                        >
+                          <FolderOpen className="w-4 h-4" />
+                          Categories
+                        </button>
             </button>
           </div>
         </div>
@@ -347,6 +379,103 @@ const AdminDashboard: React.FC = () => {
                         </button>
                       </div>
                     )}
+
+                          {/* Categories Tab */}
+                          {activeTab === 'categories' && (
+                            <div className="space-y-6">
+                              <div className="flex items-center justify-between bg-white p-6 rounded-xl shadow-sm">
+                                <div>
+                                  <h2 className="text-2xl font-bold text-gray-900">Manage Categories</h2>
+                                  <p className="text-gray-600 mt-1">Add, edit, or remove product categories</p>
+                                </div>
+                                <button
+                                  onClick={() => setShowAddCategory(true)}
+                                  className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg"
+                                >
+                                  <Plus className="w-5 h-5" />
+                                  Add Category
+                                </button>
+                              </div>
+
+                              <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                                <table className="w-full">
+                                  <thead className="bg-gray-50 border-b-2 border-gray-200">
+                                    <tr>
+                                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Icon</th>
+                                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Name</th>
+                                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Slug</th>
+                                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">Description</th>
+                                      <th className="px-6 py-4 text-center text-sm font-semibold text-gray-700">Order</th>
+                                      <th className="px-6 py-4 text-center text-sm font-semibold text-gray-700">Products</th>
+                                      <th className="px-6 py-4 text-center text-sm font-semibold text-gray-700">Status</th>
+                                      <th className="px-6 py-4 text-right text-sm font-semibold text-gray-700">Actions</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody className="divide-y divide-gray-200">
+                                    {categories.map((cat) => (
+                                      <tr key={cat._id} className="hover:bg-gray-50 transition-colors">
+                                        <td className="px-6 py-4">
+                                          <div className="text-2xl">{cat.icon || '📁'}</div>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                          <div className="font-semibold text-gray-900">{cat.name}</div>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                          <code className="text-sm text-gray-600 bg-gray-100 px-2 py-1 rounded">{cat.slug}</code>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                          <div className="text-sm text-gray-600 max-w-xs truncate">
+                                            {cat.description || '-'}
+                                          </div>
+                                        </td>
+                                        <td className="px-6 py-4 text-center">
+                                          <span className="text-sm font-medium text-gray-700">{cat.order}</span>
+                                        </td>
+                                        <td className="px-6 py-4 text-center">
+                                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                            {cat.productCount || 0}
+                                          </span>
+                                        </td>
+                                        <td className="px-6 py-4 text-center">
+                                          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
+                                            cat.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                                          }`}>
+                                            {cat.isActive ? 'Active' : 'Inactive'}
+                                          </span>
+                                        </td>
+                                        <td className="px-6 py-4 text-right">
+                                          <div className="flex items-center justify-end gap-2">
+                                            <button
+                                              onClick={() => setShowCategoryEdit(cat)}
+                                              className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                              title="Edit"
+                                            >
+                                              <Edit className="w-4 h-4" />
+                                            </button>
+                                            <button
+                                              onClick={() => handleDeleteCategory(cat._id)}
+                                              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                              title="Delete"
+                                            >
+                                              <Trash2 className="w-4 h-4" />
+                                            </button>
+                                          </div>
+                                        </td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+
+                                {categories.length === 0 && (
+                                  <div className="text-center py-12 text-gray-500">
+                                    <FolderOpen className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                                    <p className="text-lg font-medium">No categories found</p>
+                                    <p className="text-sm">Click "Add Category" to create your first category</p>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
                   </div>
                 )}
                 {!loading && data && data.recentInquiries && data.recentInquiries.length > 0 ? (
@@ -715,6 +844,25 @@ const AdminDashboard: React.FC = () => {
                             const json = await res.json();
                             if (!res.ok) throw new Error(json.message || 'Delete failed');
                             fetchGallery();
+
+                            const handleDeleteCategory = async (id: string) => {
+                              if (!confirm('Are you sure you want to delete this category? This will fail if products are assigned to it.')) return;
+                              try {
+                                const token = authService.getToken();
+                                const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/categories/${id}`, {
+                                  method: 'DELETE',
+                                  headers: { Authorization: `Bearer ${token || ''}` }
+                                });
+                                const json = await res.json();
+                                if (!res.ok) {
+                                  alert(json.message || 'Error deleting category');
+                                  return;
+                                }
+                                fetchCategories();
+                              } catch (err: any) {
+                                alert(err.message);
+                              }
+                            };
                           } catch (err: any) {
                             console.error(err);
                             alert(err.message || 'Delete failed');
@@ -753,6 +901,14 @@ const AdminDashboard: React.FC = () => {
             galleryItem={showGalleryEdit}
             onClose={() => { setShowGalleryEdit(null); setShowAddGallery(false); }}
             onSaved={() => { fetchGallery(); setShowGalleryEdit(null); setShowAddGallery(false); }}
+
+                  {(showCategoryEdit || showAddCategory) && (
+                    <CategoryEditModal
+                      category={showCategoryEdit}
+                      onClose={() => { setShowCategoryEdit(null); setShowAddCategory(false); }}
+                      onSaved={() => { fetchCategories(); setShowCategoryEdit(null); setShowAddCategory(false); }}
+                    />
+                  )}
           />
         )}
       </div>
