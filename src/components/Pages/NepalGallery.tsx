@@ -19,7 +19,10 @@ export default function NepalGallery() {
   const [loading, setLoading] = useState(true);
 
   const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
-  const API_ORIGIN = API_BASE.replace(/\/api$/, '');
+  // In production (HTTPS), use the current page origin; in dev, use API_BASE origin
+  const API_ORIGIN = window.location.protocol === 'https:' 
+    ? window.location.origin 
+    : API_BASE.replace(/\/api$/, '');
 
   const normalizeImageUrl = (raw: string | undefined) => {
     if (!raw) return '';
@@ -28,7 +31,7 @@ export default function NepalGallery() {
     if (s.startsWith('data:image')) return s;
     // relative path from backend public
     if (s.startsWith('/')) return `${API_ORIGIN}${s}`;
-    // absolute URL: normalize localhost port if needed
+    // absolute URL: normalize localhost port if needed (dev only)
     try {
       const u = new URL(s);
       const origin = new URL(API_ORIGIN);

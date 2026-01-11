@@ -37,6 +37,32 @@ const AdminDashboard: React.FC = () => {
   const perPage = 12;
   const navigate = useNavigate();
 
+  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+  // In production (HTTPS), use the current page origin; in dev, use API_BASE origin
+  const API_ORIGIN = window.location.protocol === 'https:' 
+    ? window.location.origin 
+    : API_BASE.replace(/\/api$/, '');
+
+  function getDisplayImage(raw: string | undefined) {
+    if (!raw) return '';
+    const s = String(raw);
+    // data URL (preview of uploads)
+    if (s.startsWith('data:image')) return s;
+    // relative path from backend public
+    if (s.startsWith('/')) return `${API_ORIGIN}${s}`;
+    // absolute URL: normalize localhost port if needed (dev only)
+    try {
+      const u = new URL(s);
+      const origin = new URL(API_ORIGIN);
+      const isLocalhost = u.hostname === 'localhost' || u.hostname === '127.0.0.1';
+      if (isLocalhost && (u.port !== origin.port)) {
+        // rebase to current backend origin to avoid port mismatches
+        return `${API_ORIGIN}${u.pathname}`;
+      }
+    } catch { /* ignore URL parse errors and fall through */ }
+    return s;
+  }
+
   const fetchDashboard = async () => {
     setLoading(true);
     setError(null);

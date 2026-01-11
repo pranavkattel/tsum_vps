@@ -206,9 +206,6 @@ router.post('/', authenticateToken, requireAdmin, async (req, res) => {
     console.log('=== CREATE PRODUCT ===');
     console.log('Images received:', images ? images.length : 0);
     
-    // Get backend URL from environment or default
-    const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3005';
-    
     // Process images: convert base64 to files
     const processedImages = [];
     if (images && Array.isArray(images)) {
@@ -233,8 +230,8 @@ router.post('/', authenticateToken, requireAdmin, async (req, res) => {
             
             await fs.writeFile(fullPath, Buffer.from(base64Data, 'base64'));
             console.log('Saved image to:', fullPath);
-            // Store full URL so it can be served from backend
-            processedImages.push(`${BACKEND_URL}/${fileName}`);
+            // Store relative path (works in any environment)
+            processedImages.push(`/${fileName}`);
           }
         } else {
           // This is already a URL, keep it
@@ -277,9 +274,6 @@ router.put('/:id', authenticateToken, requireAdmin, async (req, res) => {
     console.log('Images received:', images ? images.length : 0);
     console.log('First image type:', images && images[0] ? (images[0].startsWith('data:image') ? 'base64' : 'URL') : 'none');
     
-    // Get backend URL from environment or default
-    const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3005';
-    
     // Process images: keep existing URLs, convert base64 to files
     const processedImages = [];
     if (images && Array.isArray(images)) {
@@ -304,8 +298,8 @@ router.put('/:id', authenticateToken, requireAdmin, async (req, res) => {
             
             await fs.writeFile(fullPath, Buffer.from(base64Data, 'base64'));
             console.log('Saved image to:', fullPath);
-            // Store full URL so it can be served from backend
-            processedImages.push(`${BACKEND_URL}/${fileName}`);
+            // Store relative path (works in any environment)
+            processedImages.push(`/${fileName}`);
           }
         } else {
           // This is already a URL, keep it
