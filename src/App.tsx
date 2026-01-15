@@ -7,7 +7,6 @@ import ScrollToTop from './components/ScrollToTop';
 // import HeroSection from './components/Home/HeroSection';
 import StatsSection from './components/Home/StatsSection';
 import FeaturesSection from './components/Home/FeaturesSection';
-import ArtisanSpotlight from './components/Home/ArtisanSpotlight';
 import ParallaxProductShowcase from './components/Home/ParallaxProductShowcase';
 import Shop from './components/Shop/Shop';
 import ProductDetail from './components/Product/ProductDetail';
@@ -99,10 +98,6 @@ function App() {
               />
               <StatsSection />
               <FeaturesSection />
-              <ArtisanSpotlight 
-                artisans={artisans}
-                onArtisanClick={handleArtisanClick}
-              />
             </>
           );
         
