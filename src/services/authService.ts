@@ -166,6 +166,28 @@ class AuthService {
     }
   }
 
+  async changePassword(currentPassword: string, newPassword: string): Promise<ApiResponse<any>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/change-password`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...this.getAuthHeader(),
+        },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Change password error:', error);
+      return {
+        success: false,
+        message: 'Network error. Please try again.',
+      };
+    }
+  }
+
   logout() {
     localStorage.removeItem('authToken');
     localStorage.removeItem('userData');

@@ -212,6 +212,7 @@ router.get('/profile', async (req, res) => {
 router.put('/profile', [
   body('firstName').optional().trim().isLength({ min: 2 }).withMessage('First name must be at least 2 characters'),
   body('lastName').optional().trim().isLength({ min: 2 }).withMessage('Last name must be at least 2 characters'),
+  body('email').optional().isEmail().normalizeEmail().withMessage('Please provide a valid email'),
 ], async (req, res) => {
   try {
     const token = req.header('Authorization')?.replace('Bearer ', '');
@@ -244,13 +245,36 @@ router.put('/profile', [
     }
 
     // Update user fields
-    const { firstName, lastName, phone, address } = req.body;
+    const { firstName, lastName, email, phone, address } = req.body;
+    
+    console.log('Update profile request - Current user email:', user.email);
+    console.log('Update profile request - New email from body:', email);
+    console.log('Email comparison:', email !== user.email);
+    
+    // If email is being changed, check if it's already in use by another user
+    if (email && email !== user.email) {
+      console.log('Email is being changed, checking for duplicates...');
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        console.log('Email already exists for another user');
+        return res.status(400).json({
+          success: false,
+          message: 'Email already in use by another account',
+          errors: [{ param: 'email', msg: 'Email already in use' }]
+        });
+      }
+      console.log('Setting new email:', email);
+      user.email = email;
+    }
+    
     if (firstName) user.firstName = firstName;
     if (lastName) user.lastName = lastName;
     if (phone) user.phone = phone;
     if (address) user.address = { ...user.address, ...address };
 
+    console.log('About to save user with email:', user.email);
     await user.save();
+    console.log('User saved, email is now:', user.email);
 
     res.json({
       success: true,
@@ -263,6 +287,72 @@ router.put('/profile', [
     res.status(500).json({
       success: false,
       message: 'Server error during profile update',
+      error: error.message
+    });
+  }
+});
+
+// Change password
+router.put('/change-password', [
+  body('currentPassword').notEmpty().withMessage('Current password is required'),
+  body('newPassword').isLength({ min: 6 }).withMessage('New password must be at least 6 characters')
+], async (req, res) => {
+  try {
+    const token = req.header('Authorization')?.replace('Bearer ', '');
+    
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: 'No token, authorization denied'
+      });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    const user = await User.findById(decoded.userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors: errors.array()
+      });
+    }
+
+    const { currentPassword, newPassword } = req.body;
+
+    // Verify current password
+    const isPasswordValid = await user.comparePassword(currentPassword);
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: 'Current password is incorrect',
+        errors: [{ param: 'currentPassword', msg: 'Current password is incorrect' }]
+      });
+    }
+
+    // Set new password (will be hashed by pre-save hook)
+    user.password = newPassword;
+    await user.save();
+
+    res.json({
+      success: true,
+      message: 'Password changed successfully'
+    });
+
+  } catch (error) {
+    console.error('Password change error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error during password change',
       error: error.message
     });
   }

@@ -1,10 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User, Mail, Phone, MapPin, Calendar, Edit2, Save, X } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import authService from '../../services/authService';
 
 export default function Profile() {
   const { state, dispatch } = useApp();
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordSuccess, setPasswordSuccess] = useState('');
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
   const [formData, setFormData] = useState({
     firstName: state.user?.firstName || '',
     lastName: state.user?.lastName || '',
@@ -16,6 +28,23 @@ export default function Profile() {
     postalCode: state.user?.address?.postalCode || '',
     country: state.user?.address?.country || 'Nepal',
   });
+
+  // Sync form data when user state changes
+  useEffect(() => {
+    if (state.user) {
+      setFormData({
+        firstName: state.user.firstName || '',
+        lastName: state.user.lastName || '',
+        email: state.user.email || '',
+        phone: state.user.phone || '',
+        street: state.user.address?.street || '',
+        city: state.user.address?.city || '',
+        state: state.user.address?.state || '',
+        postalCode: state.user.address?.postalCode || '',
+        country: state.user.address?.country || 'Nepal',
+      });
+    }
+  }, [state.user]);
 
   if (!state.isAuthenticated) {
     return (
@@ -42,29 +71,49 @@ export default function Profile() {
   }
 
   const handleSave = async () => {
-    // TODO: Add API call to update user profile
-    // For now, just update local state
-    dispatch({
-      type: 'LOGIN',
-      payload: {
-        user: {
-          ...state.user!,
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          phone: formData.phone,
-          address: {
-            street: formData.street,
-            city: formData.city,
-            state: formData.state,
-            postalCode: formData.postalCode,
-            country: formData.country,
-          },
+    setLoading(true);
+    setError('');
+    
+    try {
+      console.log('Saving profile with data:', formData);
+      
+      // Call backend API to update profile
+      const response = await authService.updateProfile({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        phone: formData.phone,
+        address: {
+          street: formData.street,
+          city: formData.city,
+          state: formData.state,
+          postalCode: formData.postalCode,
+          country: formData.country,
         },
-        token: state.token || '',
-      },
-    });
-    setIsEditing(false);
+      });
+
+      console.log('Profile update response:', response);
+
+      if (response.success && response.user) {
+        console.log('Profile updated successfully:', response.user);
+        // Update context with the new user data from backend
+        dispatch({
+          type: 'LOGIN',
+          payload: {
+            user: response.user,
+            token: state.token || '',
+          },
+        });
+        setIsEditing(false);
+      } else {
+        console.error('Profile update failed:', response);
+        setError(response.message || 'Failed to update profile');
+      }
+    } catch (err) {
+      console.error('Profile update error:', err);
+      setError('An error occurred while updating your profile');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCancel = () => {
@@ -80,6 +129,48 @@ export default function Profile() {
       country: state.user?.address?.country || 'Nepal',
     });
     setIsEditing(false);
+  };
+
+  const handlePasswordChange = async () => {
+    setPasswordLoading(true);
+    setPasswordError('');
+    setPasswordSuccess('');
+
+    // Validate passwords match
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setPasswordError('New passwords do not match');
+      setPasswordLoading(false);
+      return;
+    }
+
+    if (passwordData.newPassword.length < 6) {
+      setPasswordError('New password must be at least 6 characters');
+      setPasswordLoading(false);
+      return;
+    }
+
+    try {
+      const response = await authService.changePassword(
+        passwordData.currentPassword,
+        passwordData.newPassword
+      );
+
+      if (response.success) {
+        setPasswordSuccess('Password changed successfully!');
+        setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+        setTimeout(() => {
+          setIsChangingPassword(false);
+          setPasswordSuccess('');
+        }, 2000);
+      } else {
+        setPasswordError(response.message || 'Failed to change password');
+      }
+    } catch (err) {
+      console.error('Password change error:', err);
+      setPasswordError('An error occurred while changing your password');
+    } finally {
+      setPasswordLoading(false);
+    }
   };
 
   return (
@@ -125,14 +216,16 @@ export default function Profile() {
                 <div className="flex gap-2">
                   <button
                     onClick={handleSave}
-                    className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 font-mono text-sm font-bold hover:bg-green-700 transition-colors border-3 border-ink"
+                    disabled={loading}
+                    className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 font-mono text-sm font-bold hover:bg-green-700 transition-colors border-3 border-ink disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Save className="h-4 w-4" />
-                    Save
+                    {loading ? 'Saving...' : 'Save'}
                   </button>
                   <button
                     onClick={handleCancel}
-                    className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 font-mono text-sm font-bold hover:bg-red-700 transition-colors border-3 border-ink"
+                    disabled={loading}
+                    className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 font-mono text-sm font-bold hover:bg-red-700 transition-colors border-3 border-ink disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <X className="h-4 w-4" />
                     Cancel
@@ -144,6 +237,13 @@ export default function Profile() {
 
           {/* Profile Details */}
           <div className="p-6 space-y-6">
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-100 border-3 border-red-600 p-4 mb-4">
+                <p className="text-red-600 font-mono text-sm font-bold">{error}</p>
+              </div>
+            )}
+
             {/* First Name */}
             <div>
               <label className="flex items-center gap-2 text-sm font-mono font-bold text-ink mb-2">
@@ -299,6 +399,100 @@ export default function Profile() {
                   </p>
                 </div>
               </div>
+            </div>
+
+            {/* Password Change Section */}
+            <div className="border-t-3 border-ink pt-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-display font-bold text-ink">Security</h3>
+                {!isChangingPassword && (
+                  <button
+                    onClick={() => setIsChangingPassword(true)}
+                    className="bg-ink text-rice px-4 py-2 font-mono text-sm font-bold hover:bg-terracotta transition-colors border-3 border-ink"
+                  >
+                    Change Password
+                  </button>
+                )}
+              </div>
+
+              {isChangingPassword && (
+                <div className="bg-rice/50 border-3 border-ink p-6 space-y-4">
+                  {passwordError && (
+                    <div className="bg-red-100 border-3 border-red-600 p-4">
+                      <p className="text-red-600 font-mono text-sm font-bold">{passwordError}</p>
+                    </div>
+                  )}
+
+                  {passwordSuccess && (
+                    <div className="bg-green-100 border-3 border-green-600 p-4">
+                      <p className="text-green-600 font-mono text-sm font-bold">{passwordSuccess}</p>
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="block text-sm font-mono font-bold text-ink mb-2">
+                      Current Password
+                    </label>
+                    <input
+                      type="password"
+                      value={passwordData.currentPassword}
+                      onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+                      className="w-full px-4 py-3 border-3 border-ink font-mono text-sm focus:outline-none focus:shadow-brutal-sm"
+                      placeholder="Enter current password"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-mono font-bold text-ink mb-2">
+                      New Password
+                    </label>
+                    <input
+                      type="password"
+                      value={passwordData.newPassword}
+                      onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                      className="w-full px-4 py-3 border-3 border-ink font-mono text-sm focus:outline-none focus:shadow-brutal-sm"
+                      placeholder="Enter new password (min 6 characters)"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-mono font-bold text-ink mb-2">
+                      Confirm New Password
+                    </label>
+                    <input
+                      type="password"
+                      value={passwordData.confirmPassword}
+                      onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+                      className="w-full px-4 py-3 border-3 border-ink font-mono text-sm focus:outline-none focus:shadow-brutal-sm"
+                      placeholder="Confirm new password"
+                    />
+                  </div>
+
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handlePasswordChange}
+                      disabled={passwordLoading}
+                      className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 font-mono text-sm font-bold hover:bg-green-700 transition-colors border-3 border-ink disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <Save className="h-4 w-4" />
+                      {passwordLoading ? 'Changing...' : 'Change Password'}
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsChangingPassword(false);
+                        setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+                        setPasswordError('');
+                        setPasswordSuccess('');
+                      }}
+                      disabled={passwordLoading}
+                      className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 font-mono text-sm font-bold hover:bg-red-700 transition-colors border-3 border-ink disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <X className="h-4 w-4" />
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

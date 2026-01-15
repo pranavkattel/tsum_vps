@@ -30,16 +30,25 @@ connectDB();
 // Middleware
 app.use(cors({
   origin: [
-    process.env.FRONTEND_URL || 'http://localhost:5173', 
+    process.env.FRONTEND_URL || 'http://localhost:5173',
+    'https://thehimalayanhandicraft.com',
+    'http://thehimalayanhandicraft.com',
     'http://127.0.0.1:5174',
     'http://localhost:5174',
     'http://127.0.0.1:4173', // Vite preview
     'http://localhost:4173'   // Vite preview
   ],
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Handle preflight requests
+app.options('*', cors());
+
+// Increase payload size limits for image uploads
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Serve static images from public folder (including uploaded images)
 app.use('/images', express.static(path.join(__dirname, '../public/images')));
