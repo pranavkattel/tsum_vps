@@ -15,7 +15,7 @@ createRoot(document.getElementById('root')!).render(
       <ScrollToTop />
       <BackgroundAudio />
       <App />
-      <FloatingWhatsApp phone="9779812345678" message="Hello! I want to inquire about a product." />
+      <FloatingWhatsApp phone="9779709127173" />
     </BrowserRouter>
   </StrictMode>
 );

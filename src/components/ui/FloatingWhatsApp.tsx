@@ -2,15 +2,33 @@ import React from 'react';
 
 type Props = {
   phone?: string; // E.164 format without plus, e.g. "15551234567"
+  /**
+   * Optional static message. If not provided, a dynamic message will be generated
+   * that includes the current page title and URL (so product title is included
+   * on product pages).
+   */
   message?: string;
 };
 
-const FloatingWhatsApp: React.FC<Props> = ({ phone = '9779709127173', message = 'Hi! I have a question about a product.' }) => {
-  const whatsappNative = `whatsapp://send?phone=${phone}&text=${encodeURIComponent(message)}`;
-  const waMe = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+const FloatingWhatsApp: React.FC<Props> = ({ phone = '9779709127173', message }) => {
+  const buildMessage = () => {
+    if (message && message.trim().length > 0) {
+      return message;
+    }
+
+    const title = typeof document !== 'undefined' ? document.title || 'your products' : 'your products';
+    const url = typeof window !== 'undefined' ? window.location.href : '';
+
+    return `Hello! I want to inquire about: *${title}*\n\nPage: ${url}\n\nCould you please provide more details, pricing, and availability?`;
+  };
 
   const openWhatsApp = (e: React.MouseEvent) => {
     e.preventDefault();
+
+    const finalMessage = buildMessage();
+    const whatsappNative = `whatsapp://send?phone=${phone}&text=${encodeURIComponent(finalMessage)}`;
+    const waMe = `https://wa.me/${phone}?text=${encodeURIComponent(finalMessage)}`;
+
     // Try native protocol first (mobile / WhatsApp Desktop). Fallback to wa.me.
     window.location.href = whatsappNative;
     setTimeout(() => {
@@ -20,7 +38,7 @@ const FloatingWhatsApp: React.FC<Props> = ({ phone = '9779709127173', message = 
 
   return (
     <a
-      href={waMe}
+      href="#whatsapp-chat"
       onClick={openWhatsApp}
       aria-label="Chat on WhatsApp"
       title="Chat on WhatsApp"
