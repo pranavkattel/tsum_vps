@@ -5,7 +5,7 @@ type Props = {
   message?: string;
 };
 
-const FloatingWhatsApp: React.FC<Props> = ({ phone = '15551234567', message = 'Hi! I have a question about a product.' }) => {
+const FloatingWhatsApp: React.FC<Props> = ({ phone = '9779709127173', message = 'Hi! I have a question about a product.' }) => {
   const whatsappNative = `whatsapp://send?phone=${phone}&text=${encodeURIComponent(message)}`;
   const waMe = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 
