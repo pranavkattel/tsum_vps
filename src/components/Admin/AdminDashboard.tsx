@@ -19,6 +19,7 @@ type DashboardData = {
 };
 
 const AdminDashboard: React.FC = () => {
+  const LOCAL_PLACEHOLDER = '/images/placeholder.svg';
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,32 +37,6 @@ const AdminDashboard: React.FC = () => {
     const [showAddCategory, setShowAddCategory] = useState(false);
   const perPage = 12;
   const navigate = useNavigate();
-
-  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
-  // In production (HTTPS), use the current page origin; in dev, use API_BASE origin
-  const API_ORIGIN = window.location.protocol === 'https:' 
-    ? window.location.origin 
-    : API_BASE.replace(/\/api$/, '');
-
-  function getDisplayImage(raw: string | undefined) {
-    if (!raw) return '';
-    const s = String(raw);
-    // data URL (preview of uploads)
-    if (s.startsWith('data:image')) return s;
-    // relative path from backend public
-    if (s.startsWith('/')) return `${API_ORIGIN}${s}`;
-    // absolute URL: normalize localhost port if needed (dev only)
-    try {
-      const u = new URL(s);
-      const origin = new URL(API_ORIGIN);
-      const isLocalhost = u.hostname === 'localhost' || u.hostname === '127.0.0.1';
-      if (isLocalhost && (u.port !== origin.port)) {
-        // rebase to current backend origin to avoid port mismatches
-        return `${API_ORIGIN}${u.pathname}`;
-      }
-    } catch { /* ignore URL parse errors and fall through */ }
-    return s;
-  }
 
   const fetchDashboard = async () => {
     setLoading(true);
@@ -205,6 +180,13 @@ const AdminDashboard: React.FC = () => {
     return (p.name && p.name.toLowerCase().includes(s)) || String(p.id).toLowerCase().includes(s) || (p.category && p.category.toLowerCase().includes(s));
   });
 
+  function getDisplayImage(raw: string | undefined) {
+    if (!raw) return LOCAL_PLACEHOLDER;
+    // Images are in public folder, served at root: /IMG-*.jpg
+    console.log('Loading image:', raw);
+    return raw;
+  }
+
   // Inline component: try product images (from DB) sequentially before falling back
   const ProductImage: React.FC<{ images: any[]; alt?: string; className?: string }> = ({ images, alt, className }) => {
     const [index, setIndex] = useState(0);
@@ -218,13 +200,13 @@ const AdminDashboard: React.FC = () => {
 
     function tryNext() {
       if (!images || images.length === 0) {
-        setSrc('');
+        setSrc(LOCAL_PLACEHOLDER);
         return;
       }
       // find the next available image that isn't the current src
       let next = index + 1;
       if (next >= images.length) {
-        setSrc('');
+        setSrc(LOCAL_PLACEHOLDER);
         return;
       }
       setIndex(next);
@@ -826,11 +808,11 @@ const AdminDashboard: React.FC = () => {
                 <div key={item._id} className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-200 hover:border-emerald-500">
                   <div className="h-48 w-full bg-gray-100 overflow-hidden">
                     <img
-                      src={getDisplayImage(item.image)}
+                      src={item.image}
                       alt={item.title}
                       className="w-full h-full object-cover"
                       onError={(e: any) => {
-                        e.target.style.display = 'none';
+                        e.target.src = LOCAL_PLACEHOLDER;
                       }}
                     />
                   </div>

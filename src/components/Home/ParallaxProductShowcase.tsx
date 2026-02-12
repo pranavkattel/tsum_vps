@@ -5,6 +5,7 @@ import { Card, CardContent, CardFooter } from "../ui/card";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { Product } from "../../types";
+import { useDeviceDetection } from "../../hooks/useDeviceDetection";
 
 const IMG_PADDING = 12;
 
@@ -48,6 +49,7 @@ const StickyImage: React.FC<{ imgUrl: string }> = ({ imgUrl }) => {
 
   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.85]);
   const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
+  const { isMobile } = useDeviceDetection();
 
   // All available videos
   const videos = [
@@ -66,8 +68,15 @@ const StickyImage: React.FC<{ imgUrl: string }> = ({ imgUrl }) => {
   
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [activeVideo, setActiveVideo] = useState<1 | 2>(1);
+  const [videosLoaded, setVideosLoaded] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
 
   React.useEffect(() => {
+    if (isMobile) {
+      // On mobile, don't load videos at all
+      return;
+    }
+
     const currentRef = activeVideo === 1 ? video1Ref : video2Ref;
     const nextRef = activeVideo === 1 ? video2Ref : video1Ref;
     const video = currentRef.current;
@@ -75,17 +84,23 @@ const StickyImage: React.FC<{ imgUrl: string }> = ({ imgUrl }) => {
     
     if (!video || !nextVideo) return;
 
-    // Set playback speed to 2x for both videos
+    // Set playback speed to 1.5x for both videos
     video.playbackRate = 1.5;
     nextVideo.playbackRate = 1.5;
 
-    // Preload next video
-    const nextIndex = (currentVideoIndex + 1) % videos.length;
-    nextVideo.src = videos[nextIndex];
-    nextVideo.load();
+    // Handle when video can play through (fully loaded)
+    const handleCanPlayThrough = () => {
+      setVideosLoaded(true);
+      setTimeout(() => setShowVideo(true), 500); // Small delay for smooth transition
+    };
 
     // Handle video end with smooth crossfade
     const handleVideoEnd = () => {
+      // Preload next video
+      const nextIndex = (currentVideoIndex + 1) % videos.length;
+      nextVideo.src = videos[nextIndex];
+      nextVideo.load();
+      
       // Start playing next video immediately
       nextVideo.play().then(() => {
         // Switch active video
@@ -94,12 +109,15 @@ const StickyImage: React.FC<{ imgUrl: string }> = ({ imgUrl }) => {
       });
     };
 
+    // Add event listeners
+    video.addEventListener('canplaythrough', handleCanPlayThrough);
     video.addEventListener('ended', handleVideoEnd);
     
     return () => {
+      video.removeEventListener('canplaythrough', handleCanPlayThrough);
       video.removeEventListener('ended', handleVideoEnd);
     };
-  }, [currentVideoIndex, activeVideo, videos]);
+  }, [currentVideoIndex, activeVideo, videos, isMobile]);
 
   return (
     <motion.div
@@ -111,25 +129,39 @@ const StickyImage: React.FC<{ imgUrl: string }> = ({ imgUrl }) => {
       ref={targetRef}
       className="sticky z-0 overflow-hidden border-4 border-ink bg-black"
     >
-      <video
-        ref={video1Ref}
-        autoPlay
-        muted
-        playsInline
-        src={videos[0]}
-        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-          activeVideo === 1 ? 'opacity-100 z-10' : 'opacity-0 z-0'
-        }`}
-      />
-      
-      <video
-        ref={video2Ref}
-        muted
-        playsInline
-        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-          activeVideo === 2 ? 'opacity-100 z-10' : 'opacity-0 z-0'
-        }`}
-      />
+      {/* Placeholder Image - shown on mobile or while videos load */}
+      {(isMobile || !showVideo) && (
+        <img
+          src={imgUrl}
+          alt="Hero background"
+          className="absolute inset-0 w-full h-full object-cover z-10"
+        />
+      )}
+
+      {/* Videos - only on desktop and after loading */}
+      {!isMobile && (
+        <>
+          <video
+            ref={video1Ref}
+            autoPlay
+            muted
+            playsInline
+            src={videos[0]}
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+              showVideo && activeVideo === 1 ? 'opacity-100 z-10' : 'opacity-0 z-0'
+            }`}
+          />
+          
+          <video
+            ref={video2Ref}
+            muted
+            playsInline
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+              showVideo && activeVideo === 2 ? 'opacity-100 z-10' : 'opacity-0 z-0'
+            }`}
+          />
+        </>
+      )}
 
       <motion.div
         className="absolute inset-0 bg-indigo-deep/70 z-20"

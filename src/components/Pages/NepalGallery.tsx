@@ -1,82 +1,102 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Mountain, X } from 'lucide-react';
+
+const nepalScenery = [
+  {
+    id: 1,
+    title: "Mount Everest",
+    description: "The world's highest peak, standing at 8,848.86 meters above sea level",
+    image: "https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?w=800&auto=format&fit=crop",
+    category: "Mountains"
+  },
+  {
+    id: 2,
+    title: "Annapurna Range",
+    description: "Majestic Himalayan peaks reflecting in pristine mountain lakes",
+    image: "https://images.unsplash.com/photo-1605540436563-5bca919ae766?w=800&auto=format&fit=crop",
+    category: "Mountains"
+  },
+  {
+    id: 3,
+    title: "Phewa Lake, Pokhara",
+    description: "Serene lake with stunning mountain reflections and traditional boats",
+    image: "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?w=800&auto=format&fit=crop",
+    category: "Lakes"
+  },
+  {
+    id: 4,
+    title: "Kathmandu Valley",
+    description: "Ancient temples and traditional architecture nestled in green valleys",
+    image: "https://images.unsplash.com/photo-1584196603779-7b8b7c8c8b0c?w=800&auto=format&fit=crop",
+    category: "Valleys"
+  },
+  {
+    id: 5,
+    title: "Himalayan Sunrise",
+    description: "Golden rays illuminating the snow-capped peaks at dawn",
+    image: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=800&auto=format&fit=crop",
+    category: "Mountains"
+  },
+  {
+    id: 6,
+    title: "Rice Terraces",
+    description: "Traditional terraced farming on hillsides showcasing Nepal's agricultural heritage",
+    image: "https://images.unsplash.com/photo-1504870712357-65ea720d6078?w=800&auto=format&fit=crop",
+    category: "Landscapes"
+  },
+  {
+    id: 7,
+    title: "Swayambhunath Stupa",
+    description: "The iconic Monkey Temple overlooking Kathmandu Valley",
+    image: "https://images.unsplash.com/photo-1571408782488-65b2c0e0a2f3?w=800&auto=format&fit=crop",
+    category: "Heritage"
+  },
+  {
+    id: 8,
+    title: "Langtang Valley",
+    description: "Pristine valley surrounded by towering Himalayan peaks",
+    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&auto=format&fit=crop",
+    category: "Valleys"
+  },
+  {
+    id: 9,
+    title: "Mountain Monasteries",
+    description: "Ancient Buddhist monasteries perched on mountain cliffs",
+    image: "https://images.unsplash.com/photo-1552055564-8a0b0e8f9e3e?w=800&auto=format&fit=crop",
+    category: "Heritage"
+  },
+  {
+    id: 10,
+    title: "Himalayan Wildlife",
+    description: "Diverse flora and fauna in the world's highest mountains",
+    image: "https://images.unsplash.com/photo-1516825513084-7a3397fcd108?w=800&auto=format&fit=crop",
+    category: "Nature"
+  },
+  {
+    id: 11,
+    title: "Chitwan National Park",
+    description: "Lush subtropical forests home to rhinos, tigers, and elephants",
+    image: "https://images.unsplash.com/photo-1564760055775-d63b17a55c44?w=800&auto=format&fit=crop",
+    category: "Nature"
+  },
+  {
+    id: 12,
+    title: "Prayer Flags",
+    description: "Colorful prayer flags fluttering in the mountain breeze",
+    image: "https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=800&auto=format&fit=crop",
+    category: "Culture"
+  }
+];
 
 const categories = ["All", "Mountains", "Lakes", "Valleys", "Heritage", "Nature", "Landscapes", "Culture"];
 
-interface GalleryImage {
-  _id: string;
-  title: string;
-  description: string;
-  image: string;
-  category: string;
-  isActive: boolean;
-}
-
 export default function NepalGallery() {
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
-  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
-  // In production (HTTPS), use the current page origin; in dev, use API_BASE origin
-  const API_ORIGIN = window.location.protocol === 'https:' 
-    ? window.location.origin 
-    : API_BASE.replace(/\/api$/, '');
-
-  const normalizeImageUrl = (raw: string | undefined) => {
-    if (!raw) return '';
-    const s = String(raw);
-    // data URL (preview of uploads)
-    if (s.startsWith('data:image')) return s;
-    // relative path from backend public
-    if (s.startsWith('/')) return `${API_ORIGIN}${s}`;
-    // absolute URL: normalize localhost port if needed (dev only)
-    try {
-      const u = new URL(s);
-      const origin = new URL(API_ORIGIN);
-      const isLocalhost = u.hostname === 'localhost' || u.hostname === '127.0.0.1';
-      if (isLocalhost && (u.port !== origin.port)) {
-        // rebase to current backend origin to avoid port mismatches
-        return `${API_ORIGIN}${u.pathname}`;
-      }
-    } catch { /* ignore URL parse errors and fall through */ }
-    return s;
-  };
-
-  useEffect(() => {
-    const fetchGallery = async () => {
-      try {
-        const url = `${import.meta.env.VITE_API_URL || 'http://localhost:3001/api'}/gallery`;
-        const res = await fetch(url);
-        const json = await res.json();
-        if (json.success) {
-          setGalleryImages(json.data || []);
-        }
-      } catch (err) {
-        console.error('Error fetching gallery:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchGallery();
-  }, []);
+  const [selectedImage, setSelectedImage] = useState<typeof nepalScenery[0] | null>(null);
 
   const filteredScenery = selectedCategory === "All" 
-    ? galleryImages 
-    : galleryImages.filter(item => item.category === selectedCategory);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-rice py-16 flex items-center justify-center">
-        <div className="text-center">
-          <Mountain className="w-16 h-16 text-terracotta mx-auto mb-4 animate-pulse" />
-          <p className="text-charcoal text-lg font-display">Loading gallery...</p>
-        </div>
-      </div>
-    );
-  }
+    ? nepalScenery 
+    : nepalScenery.filter(item => item.category === selectedCategory);
 
   return (
     <div className="min-h-screen bg-rice py-16">
@@ -118,13 +138,13 @@ export default function NepalGallery() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredScenery.map((scenery) => (
             <div
-              key={scenery._id}
+              key={scenery.id}
               onClick={() => setSelectedImage(scenery)}
               className="group cursor-pointer bg-white border-4 border-ink shadow-brutal hover:shadow-brutal-lg transition-all hover:translate-x-1 hover:translate-y-1 overflow-hidden"
             >
               <div className="relative h-64 overflow-hidden">
                 <img
-                  src={normalizeImageUrl(scenery.image)}
+                  src={scenery.image}
                   alt={scenery.title}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   onError={(e) => {
@@ -173,7 +193,7 @@ export default function NepalGallery() {
             </button>
             <div className="bg-white border-4 border-ink shadow-brutal-lg overflow-hidden">
               <img
-                src={normalizeImageUrl(selectedImage.image)}
+                src={selectedImage.image}
                 alt={selectedImage.title}
                 className="w-full max-h-[70vh] object-contain"
                 onClick={(e) => e.stopPropagation()}

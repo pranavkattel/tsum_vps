@@ -23,8 +23,8 @@ const createAdminUser = async () => {
       inquiries: Object
     }));
 
-    const email = 'chhewanglama2025@gmail.com';
-    const password = 'chhewang';
+    const email = 'chhewanglama2026@gmail.com';
+    const password = 'chhewangg';
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });

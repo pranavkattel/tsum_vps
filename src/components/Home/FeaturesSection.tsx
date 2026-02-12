@@ -36,7 +36,7 @@ export default function FeaturesSection() {
     {
       icon: Truck,
       title: "Worldwide Shipping",
-      description: "Complimentary shipping on orders over $150. Secure packaging guaranteed.",
+      description: "Secure packaging guaranteed worldwide. Fast and reliable delivery.",
       color: "indigo"
     },
     {
