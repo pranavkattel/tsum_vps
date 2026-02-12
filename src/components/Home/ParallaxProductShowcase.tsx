@@ -132,7 +132,7 @@ const StickyImage: React.FC<{ imgUrl: string }> = ({ imgUrl }) => {
       {/* Placeholder Image - shown on mobile or while videos load */}
       {(isMobile || !showVideo) && (
         <img
-          src={imgUrl}
+          src="/backgound.webp"
           alt="Hero background"
           className="absolute inset-0 w-full h-full object-cover z-10"
         />
